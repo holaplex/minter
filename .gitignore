@@ -4,3 +4,5 @@ lib
 stats.html
 dist/
 yarn-error.log
+.yalc
+yalc.lock

@@ -1,5 +1,5 @@
 {
-  "name": "@holaplex/ui",
+  "name": "holaplex-ui",
   "version": "0.0.1",
   "description": "Holaplex UI",
   "main": "lib/index.cjs.js",
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/holaplex/ui#readme",
   "dependencies": {
+    "@holaplex/ui": "file:.yalc/@holaplex/ui",
     "antd": "^4.16.7"
   },
   "peerDependencies": {
