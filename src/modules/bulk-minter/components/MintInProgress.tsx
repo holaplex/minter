@@ -98,7 +98,7 @@ interface Props extends Partial<StepWizardChildProps> {
   isLast: boolean;
   updateNFTValue: (value: NFTValue, index: number) => void;
   uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
-  clearForm: () => void;
+  onClose: () => void;
   track: any; // type this properly
   holaSignMetadata: any; // type this properly
 }
@@ -114,7 +114,7 @@ export default function MintInProgress({
   wallet,
   updateNFTValue,
   uploadMetaData,
-  clearForm,
+  onClose,
   connection,
   index,
   isLast,
@@ -268,7 +268,7 @@ export default function MintInProgress({
       previousStep={previousStep}
       goToStep={goToStep}
       showNavigation={showNavigation}
-      clearForm={clearForm}
+      onClose={onClose}
     >
       <Row>
         <Col style={{ marginRight: 224 }}>

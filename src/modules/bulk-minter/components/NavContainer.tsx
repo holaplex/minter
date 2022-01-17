@@ -19,7 +19,6 @@ const Header = styled(PageHeader)`
 const StyledLayout = styled(Layout)`
   display: flex;
   align-items: center;
-  padding: 0 142px 97px;
 `;
 
 const XClose = styled.i`
@@ -41,17 +40,16 @@ const AltClearTextLink = StyledClearButton;
 interface Props extends Partial<StepWizardChildProps> {
   children?: React.ReactElement | React.ReactElement[] | boolean;
   title?: string;
-  clearForm: () => void;
   altClearText?: string;
   showNavigation?: boolean;
+  onClose: () => void;
 }
 
 export default function NavContainer({
   previousStep,
-  goToStep,
   children,
   title,
-  clearForm,
+  onClose,
   altClearText,
   showNavigation = true,
 }: Props) {
@@ -68,10 +66,11 @@ export default function NavContainer({
           onClick={() => {
             if (
               altClearText ||
-              window.confirm('Are you sure you want cancel? This will reset all of your progress.')
+              window.confirm(
+                'Are you sure you want cancel? This will exit the minter and all progress will be lost.',
+              )
             ) {
-              clearForm();
-              goToStep!(1);
+              onClose();
             }
           }}
           style={{ fontStyle: 'normal' }}

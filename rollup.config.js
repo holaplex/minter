@@ -6,6 +6,11 @@ import images from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { terser } from 'rollup-plugin-terser';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import less from 'rollup-plugin-less';
+import lessTildeImporter from '@ovh-ux/rollup-plugin-less-tilde-importer';
+import path from 'path';
+
 
 const input = 'src/index.ts';
 
@@ -25,9 +30,18 @@ const plugins = ({ browser }) => [
     dedupe: ['bn.js', 'buffer', 'crypto-hash'],
     preferBuiltins: !browser,
   }),
+  lessTildeImporter({
+    paths: [
+      path.resolve(__dirname, './node_modules'),  
+      path.resolve(__dirname, '../../node_modules'),
+    ],
+  }),
+  less({option: {javascriptEnabled: true}}),
   commonjs(),
   json(),
-  images()
+  images(),
+  peerDepsExternal(),
+
 ];
 
 const config = ({ browser, format } = { browser: false }) => {
@@ -63,7 +77,6 @@ const config = ({ browser, format } = { browser: false }) => {
       case 'iife':
         const base = {
           format: 'iife',
-          name: '@holaplex/ui',
           sourcemap: true,
           globals: {
             '@solana/web3.js': 'solanaWeb3',

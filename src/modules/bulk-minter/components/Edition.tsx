@@ -49,21 +49,16 @@ const ButtonFormItem = styled(Form.Item)`
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   index: number;
-  clearForm: () => void;
+  onClose: () => void;
 }
 
-export default function Edition({ previousStep, goToStep, images, nextStep, clearForm }: Props) {
+export default function Edition({ previousStep, goToStep, images, nextStep, onClose }: Props) {
   const handleNext = () => {
     nextStep!();
   };
 
   return (
-    <NavContainer
-      title="Edition"
-      previousStep={previousStep}
-      goToStep={goToStep}
-      clearForm={clearForm}
-    >
+    <NavContainer title="Edition" previousStep={previousStep} goToStep={goToStep} onClose={onClose}>
       <Row>
         <FormWrapper>
           <Form.Item name="edition">

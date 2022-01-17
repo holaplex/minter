@@ -14,6 +14,7 @@ import { isNil } from 'ramda';
 import OffRampScreen from './components/OffRamp';
 import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '../../utils/files';
+import '../../../ant-theme.less';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -193,9 +194,10 @@ interface Props {
   track: any;
   connect: any;
   holaSignMetadata: any;
+  onClose: () => void;
 }
 
-export default function BulkMinter({
+function BulkMinter({
   wallet,
   solana,
   connect,
@@ -203,6 +205,7 @@ export default function BulkMinter({
   connection,
   track,
   holaSignMetadata,
+  onClose,
 }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
@@ -341,12 +344,6 @@ export default function BulkMinter({
     dispatch({ type: 'SET_NFT_VALUES', payload: nftValues });
   };
 
-  const clearForm = () => {
-    dispatch({ type: 'SET_FILES', payload: [] });
-    dispatch({ type: 'SET_FILE_PREVIEWS', payload: [] });
-    form.resetFields();
-  };
-
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     // Prevent Enter submit
     if (e.key === 'Enter') {
@@ -373,7 +370,7 @@ export default function BulkMinter({
     >
       <StyledLayout>
         <StepWizard
-          isHashEnabled={false} // I don't think this will work unless we take the upload part out of the wizzard and generate all steps based on the uploaded images
+          isHashEnabled={false} // I don't think this will work unless we take the upload part out of the wizard and generate all steps based on the uploaded images
           isLazyMount={true}
           transitions={{
             enterLeft: undefined,
@@ -382,11 +379,11 @@ export default function BulkMinter({
             exitLeft: undefined,
           }}
         >
-          <Upload dispatch={dispatch} files={files} hashKey="upload" clearForm={clearForm} />
+          <Upload dispatch={dispatch} files={files} hashKey="upload" onClose={onClose} />
           <Verify
             files={files}
             dispatch={dispatch}
-            clearForm={clearForm}
+            onClose={onClose}
             track={track}
             hashKey="verify"
           />
@@ -399,7 +396,7 @@ export default function BulkMinter({
                 currentFile={file}
                 key={index}
                 form={form}
-                clearForm={clearForm}
+                onClose={onClose}
                 isLast={index === files.length - 1}
                 dispatch={dispatch}
               />
@@ -416,7 +413,7 @@ export default function BulkMinter({
             setDoEachRoyaltyInd={setDoEachRoyaltyInd}
             doEachRoyaltyInd={doEachRoyaltyInd}
             index={0}
-            clearForm={clearForm}
+            onClose={onClose}
             track={track}
           />
           {doEachRoyaltyInd &&
@@ -434,7 +431,7 @@ export default function BulkMinter({
                   index={index + 1}
                   setDoEachRoyaltyInd={setDoEachRoyaltyInd}
                   doEachRoyaltyInd={doEachRoyaltyInd}
-                  clearForm={clearForm}
+                  onClose={onClose}
                   track={track}
                 />
               ))}
@@ -446,7 +443,7 @@ export default function BulkMinter({
             form={form}
             formValues={state.formValues}
             setNFTValues={setNFTValues}
-            clearForm={clearForm}
+            onClose={onClose}
             doEachRoyaltyInd={doEachRoyaltyInd}
             track={track}
           />
@@ -455,7 +452,7 @@ export default function BulkMinter({
             filePreviews={filePreviews}
             connection={connection}
             hashKey="priceSummary"
-            clearForm={clearForm}
+            onClose={onClose}
             track={track}
             wallet={wallet}
           />
@@ -471,7 +468,7 @@ export default function BulkMinter({
               updateNFTValue={updateNFTValue}
               index={index}
               hashKey="mint"
-              clearForm={clearForm}
+              onClose={onClose}
               isLast={index === files.length - 1}
               track={track}
               holaSignMetadata={holaSignMetadata}
@@ -481,7 +478,7 @@ export default function BulkMinter({
             hashKey="success"
             filePreviews={filePreviews}
             files={files}
-            clearForm={clearForm}
+            onClose={onClose}
             nftValues={state.nftValues}
             storefront={storefront}
           />
@@ -490,3 +487,5 @@ export default function BulkMinter({
     </Form>
   );
 }
+
+export default BulkMinter;

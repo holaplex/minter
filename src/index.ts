@@ -1,4 +1,4 @@
+import '../ant-theme.less';
 import BulkMinter from './modules/bulk-minter';
-import { Hey } from './Test';
 
-export { BulkMinter, Hey };
+export { BulkMinter };

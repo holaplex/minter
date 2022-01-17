@@ -69,7 +69,7 @@ interface Props extends Partial<StepWizardChildProps> {
   filePreviews: Array<FilePreview>;
   index: number;
   form: FormInstance;
-  clearForm: () => void;
+  onClose: () => void;
   currentFile: File;
   isLast: boolean;
   dispatch: MintDispatch;
@@ -83,7 +83,7 @@ export default function InfoScreen({
   nextStep,
   form,
   isActive,
-  clearForm,
+  onClose,
   filePreviews,
   isLast,
   dispatch,
@@ -188,7 +188,7 @@ export default function InfoScreen({
       title={`Info for #${index + 1} of ${files.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
-      clearForm={clearForm}
+      onClose={onClose}
     >
       <Row>
         <FormWrapper>

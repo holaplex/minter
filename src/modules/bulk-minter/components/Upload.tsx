@@ -6,6 +6,7 @@ import { MintDispatch } from '../index';
 import { DraggerProps } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 import Button from '../../../components/Button';
+import NavContainer from './NavContainer';
 const { Dragger } = Upload;
 
 export const MAX_FILES = 10;
@@ -58,17 +59,17 @@ const StyledSpace = styled(Space)`
 interface Props extends Partial<StepWizardChildProps> {
   dispatch: MintDispatch;
   files: Array<File>;
-  clearForm: () => void;
+  onClose: () => void;
 }
 
-export default function UploadStep({ nextStep, dispatch, clearForm }: Props) {
+export default function UploadStep({ nextStep, dispatch, onClose }: Props) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   let count = 0;
 
   const resetAll = () => {
     setFileList([]);
-    clearForm();
+    onClose();
   };
 
   const draggerProps: DraggerProps = {
@@ -112,23 +113,25 @@ export default function UploadStep({ nextStep, dispatch, clearForm }: Props) {
   };
 
   return (
-    <StyledLayout>
-      <Header>Add images or videos to create NFTs</Header>
-      <Dragger {...draggerProps}>
-        <StyledSpace direction="vertical" size={24}>
-          <Space direction="vertical">
-            <Copy>Drag up to 10 files here.</Copy>
-            <Copy transparent style={{ fontSize: 14 }}>
-              Supported file types: jpg, png, gif, mp4, mov, mp3, wav, flac, glb
-            </Copy>
-          </Space>
+    <NavContainer onClose={onClose}>
+      <StyledLayout>
+        <Header>Add images or videos huh to create NFTs</Header>
+        <Dragger {...draggerProps}>
+          <StyledSpace direction="vertical" size={24}>
+            <Space direction="vertical">
+              <Copy>Drag up to 10 files here.</Copy>
+              <Copy transparent style={{ fontSize: 14 }}>
+                Supported file types: jpg, png, gif, mp4, mov, mp3, wav, flac, glb
+              </Copy>
+            </Space>
 
-          <Copy transparent>or</Copy>
-          <Button type="primary" size="large">
-            Browse Files
-          </Button>
-        </StyledSpace>
-      </Dragger>
-    </StyledLayout>
+            <Copy transparent>or</Copy>
+            <Button type="primary" size="large">
+              Browse Files
+            </Button>
+          </StyledSpace>
+        </Dragger>
+      </StyledLayout>
+    </NavContainer>
   );
 }

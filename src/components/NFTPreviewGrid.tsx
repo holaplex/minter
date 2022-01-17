@@ -9,6 +9,7 @@ import { is3DFile, is3DFilePreview, isAudio, isImage, isVideo } from '../utils/f
 import React, { useRef, useState } from 'react';
 import { StyledModal } from './VerifyFileUpload';
 import ModelViewer from './ModelViewer';
+import { isClient } from '../utils/client';
 
 const CheckWrapper = styled.div`
   position: absolute;
@@ -210,7 +211,7 @@ export const NFTPreviewGrid = ({
             <source src={URL.createObjectURL(currentFile)} type={currentFile.type} />
           </video>
         )}
-        {show3DFilePreview && currentFile && (
+        {show3DFilePreview && currentFile && isClient && (
           <ModelViewer
             src={URL.createObjectURL(currentFile)}
             alt={currentFile.name}

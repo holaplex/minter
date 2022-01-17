@@ -1,5 +1,5 @@
 import React from 'react';
-import '@google/model-viewer';
+import '@google/model-viewer/dist/model-viewer';
 
 const ModelViewer = (props: any) => (
   // @ts-ignore

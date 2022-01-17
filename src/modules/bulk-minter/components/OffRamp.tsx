@@ -45,14 +45,14 @@ const Wrapper = styled.div`
 interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   filePreviews: Array<FilePreview>;
-  clearForm: () => void;
+  onClose: () => void;
   nftValues: NFTValue[];
   storefront?: any;
 }
 
 export default function OffRampScreen({
   goToStep,
-  clearForm,
+  onClose,
   files,
   filePreviews,
   nftValues,
@@ -88,7 +88,7 @@ export default function OffRampScreen({
     <NavContainer
       title={titleTxt}
       goToStep={goToStep}
-      clearForm={clearForm}
+      onClose={onClose}
       altClearText="Mint more NFTs"
     >
       <Row>

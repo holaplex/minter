@@ -38,7 +38,7 @@ const AddNFTButton = styled.button`
 interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   dispatch: MintDispatch;
-  clearForm: () => void;
+  onClose: () => void;
   track: any; // need to import type
 }
 
@@ -48,7 +48,7 @@ export default function Verify({
   dispatch,
   goToStep,
   files,
-  clearForm,
+  onClose,
   track,
 }: Props) {
   const handleNext = () => {
@@ -80,7 +80,7 @@ export default function Verify({
   };
 
   const handlePrevious = () => {
-    clearForm();
+    onClose();
     previousStep!();
   };
 
@@ -99,7 +99,7 @@ export default function Verify({
   };
 
   return (
-    <NavContainer previousStep={handlePrevious} goToStep={goToStep} clearForm={clearForm}>
+    <NavContainer previousStep={handlePrevious} goToStep={goToStep} onClose={onClose}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
         {/* Does this need children?  Can we just put it all into one component? */}

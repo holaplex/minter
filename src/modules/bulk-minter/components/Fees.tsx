@@ -50,7 +50,7 @@ const ButtonFormItem = styled(Form.Item)`
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   index: number;
-  clearForm: () => void;
+  onClose: () => void;
 }
 
 export default function RoyaltiesCreators({
@@ -58,19 +58,14 @@ export default function RoyaltiesCreators({
   goToStep,
   images,
   nextStep,
-  clearForm,
+  onClose,
 }: Props) {
   const handleNext = () => {
     nextStep!();
   };
 
   return (
-    <NavContainer
-      title="Fees"
-      previousStep={previousStep}
-      goToStep={goToStep}
-      clearForm={clearForm}
-    >
+    <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep} onClose={onClose}>
       <Row>
         <FormWrapper>
           <Form.Item name="edition">

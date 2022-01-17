@@ -117,7 +117,7 @@ interface Props extends Partial<StepWizardChildProps> {
   form: FormInstance;
   formValues: NFTFormValue[] | null;
   setNFTValues: (filePins: UploadedFilePin[]) => void;
-  clearForm: () => void;
+  onClose: () => void;
   doEachRoyaltyInd: boolean;
   track: any; // Need to import types for this
 }
@@ -130,7 +130,7 @@ export default function Summary({
   nextStep,
   dispatch,
   formValues,
-  clearForm,
+  onClose,
   setNFTValues,
   doEachRoyaltyInd,
   track,
@@ -198,12 +198,7 @@ export default function Summary({
   if (!formValues) return null;
 
   return (
-    <NavContainer
-      title="Summary"
-      previousStep={previousStep}
-      goToStep={goToStep}
-      clearForm={clearForm}
-    >
+    <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep} onClose={onClose}>
       <Header>Do these look right?</Header>
       <Button
         onClick={upload}

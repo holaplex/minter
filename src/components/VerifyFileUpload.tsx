@@ -6,6 +6,7 @@ import { is3DFile, isAudio, isImage, isVideo } from '../utils/files';
 import FeatherIcon from 'feather-icons-react';
 import React, { useRef, useState } from 'react';
 import ModelViewer from './ModelViewer';
+import { isClient } from '../utils/client';
 
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   height: 120px;
@@ -201,7 +202,7 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
             <source src={URL.createObjectURL(currentFile)} type={currentFile.type} />
           </video>
         )}
-        {show3DFilePreview && currentFile && (
+        {show3DFilePreview && currentFile && isClient && (
           <ModelViewer
             src={URL.createObjectURL(currentFile)}
             alt={currentFile.name}

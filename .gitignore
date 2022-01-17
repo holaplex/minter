@@ -2,3 +2,5 @@
 .vscode
 lib
 stats.html
+dist/
+yarn-error.log

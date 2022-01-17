@@ -33,7 +33,7 @@ interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   filePreviews: Array<FilePreview>;
   connection: Connection;
-  clearForm: () => void;
+  onClose: () => void;
   track: any; // need to figure out how to import types for this and wallet
   wallet: any;
 }
@@ -47,7 +47,7 @@ export default function PriceSummary({
   connection,
   wallet,
   track,
-  clearForm,
+  onClose,
 }: Props) {
   const [totalSolCost, setTotalSolCost] = useState(files.length * SOL_COST_PER_NFT);
   const [totalInUSD, setTotalInUSD] = useState(0.0);
@@ -88,12 +88,7 @@ export default function PriceSummary({
   };
 
   return (
-    <NavContainer
-      title="Fees"
-      previousStep={previousStep}
-      goToStep={goToStep}
-      clearForm={clearForm}
-    >
+    <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep} onClose={onClose}>
       <Row>
         <Col style={{ width: 360 }}>
           <Row>
