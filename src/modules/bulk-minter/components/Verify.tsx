@@ -80,7 +80,6 @@ export default function Verify({
   };
 
   const handlePrevious = () => {
-    onClose();
     previousStep!();
   };
 

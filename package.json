@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/holaplex/ui#readme",
   "dependencies": {
-    "@holaplex/ui": "file:.yalc/@holaplex/ui",
     "antd": "^4.16.7"
   },
   "peerDependencies": {

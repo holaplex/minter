@@ -50,6 +50,7 @@ export default function NavContainer({
   children,
   title,
   onClose,
+  goToStep,
   altClearText,
   showNavigation = true,
 }: Props) {
@@ -64,8 +65,9 @@ export default function NavContainer({
       {showNavigation && (
         <XClose
           onClick={() => {
-            if (
-              altClearText ||
+            if (altClearText) {
+              goToStep!(0);
+            } else if (
               window.confirm(
                 'Are you sure you want cancel? This will exit the minter and all progress will be lost.',
               )

@@ -8,6 +8,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { terser } from 'rollup-plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import lessToJs from 'less-vars-to-js';
+import postcss from 'rollup-plugin-postcss'
 import less from 'rollup-plugin-less';
 import fs from 'fs';
 import lessTildeImporter from '@ovh-ux/rollup-plugin-less-tilde-importer';
@@ -16,6 +17,8 @@ import path from 'path';
 const antdLess = fs.readFileSync('./ant-theme.less', 'utf8');
 
 const antdVars = lessToJs(antdLess, {resolveVariables: true, stripPrefix: true});
+
+console.log({antdVars})
 
 const input = 'src/index.ts';
 
@@ -41,7 +44,17 @@ const plugins = ({ browser }) => [
       path.resolve(__dirname, '../../node_modules'),
     ],
   }),
-  less({option: {javascriptEnabled: true, modifyVars: antdVars}}),
+  postcss({
+    minimize: true,
+    modules: true,
+    use: {
+        sass: null,
+        stylus: null,
+        less: { javascriptEnabled: true, modifyVars: antdVars }
+    }, 
+    extract: true
+}),
+  // less({insert: true,option: {javascriptEnabled: true, modifyVars: antdVars}}),
   commonjs(),
   json(),
   images(),
@@ -74,9 +87,6 @@ const config = ({ browser, format } = { browser: false }) => {
           file: 'lib/index.browser.esm.js',
           format: 'es',
           sourcemap: true,
-          globals: {
-            'object.values': 'Object'
-          }
         };
         break;
       case 'iife':

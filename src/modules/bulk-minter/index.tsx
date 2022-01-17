@@ -188,7 +188,6 @@ function reducer(state: State, action: MintAction) {
 
 interface Props {
   connection: Connection;
-  solana: any;
   storefront: any;
   wallet: any;
   track: any;
@@ -199,7 +198,6 @@ interface Props {
 
 function BulkMinter({
   wallet,
-  solana,
   connect,
   storefront,
   connection,
@@ -351,11 +349,7 @@ function BulkMinter({
     }
   }
 
-  console.log('do we get this far?');
-  console.log({ wallet });
-  console.log({ solana });
-
-  if (!wallet || !solana) {
+  if (!wallet) {
     return null;
   }
 
