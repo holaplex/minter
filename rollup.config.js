@@ -51,7 +51,7 @@ export default {
     json(),
     nodeResolve(),
     postcss({
-      extract: true,
+      insert: true,
       use: [
         'sass',
         [
