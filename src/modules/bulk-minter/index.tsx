@@ -14,7 +14,6 @@ import { isNil } from 'ramda';
 import OffRampScreen from './components/OffRamp';
 import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '../../utils/files';
-import '../../../ant-theme.less';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -194,6 +193,7 @@ interface Props {
   connect: any;
   holaSignMetadata: any;
   onClose: () => void;
+  solana: any;
 }
 
 function BulkMinter({
@@ -204,6 +204,7 @@ function BulkMinter({
   track,
   holaSignMetadata,
   onClose,
+  solana,
 }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
@@ -349,7 +350,7 @@ function BulkMinter({
     }
   }
 
-  if (!wallet) {
+  if (!wallet || !solana) {
     return null;
   }
 
