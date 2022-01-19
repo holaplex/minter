@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 import NavContainer from './NavContainer';
 import { StepWizardChildProps } from 'react-step-wizard';
-import { Divider, PageHeader, Row } from 'antd';
+import { Button, Divider, PageHeader, Row } from 'antd';
 import { FilePreview, MintStatus, NFTValue } from '../index';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import React from 'react';
-import Button from '../../../components/Button';
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);

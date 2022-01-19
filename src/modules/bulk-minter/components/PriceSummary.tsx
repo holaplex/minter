@@ -1,4 +1,4 @@
-import { Divider, Form, Row, Col } from 'antd';
+import { Divider, Form, Row, Col, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -9,7 +9,6 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { FilePreview } from '..';
 import Price from '../../../components/Price';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
-import Button from '../../../components/Button';
 
 const SOL_COST_PER_NFT = 0.01;
 
@@ -116,7 +115,7 @@ export default function PriceSummary({
           </Row>
           <Row justify="end">
             {!hasEnoughSol && (
-              <Paragraph style={{ fontSize: 14, color: '#D24040' }}>
+              <Paragraph style={{ fontSize: 14 }} className="text-theme-color">
                 Not enough SOL in this wallet.
               </Paragraph>
             )}

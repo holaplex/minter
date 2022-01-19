@@ -1,11 +1,10 @@
-import { Layout, PageHeader, Space, Upload, notification } from 'antd';
+import { Layout, PageHeader, Space, Upload, notification, Button } from 'antd';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { MintDispatch } from '../index';
 import { DraggerProps } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
-import Button from '../../../components/Button';
 import NavContainer from './NavContainer';
 const { Dragger } = Upload;
 
@@ -93,7 +92,7 @@ export default function UploadStep({ nextStep, dispatch, onClose }: Props) {
       if (size && size > MAX_FILE_SIZE) {
         notification.error({
           message: `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
-            0,
+            0
           )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`,
         });
         resetAll();

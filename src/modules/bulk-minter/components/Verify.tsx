@@ -1,4 +1,4 @@
-import { PageHeader, Upload, Space, notification } from 'antd';
+import { PageHeader, Upload, Space, notification, Button } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import XCloseIcon from '../../../assets/images/x-close.svg';
@@ -9,7 +9,6 @@ import { MAX_FILES, NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING, MAX_FILE_SIZE } from
 import { RcFile } from 'antd/lib/upload';
 import { is3DFile, isImage } from '../../../utils/files';
 import VerifyFileUpload from '../../../components/VerifyFileUpload';
-import Button from '../../../components/Button';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -88,7 +87,7 @@ export default function Verify({
     if (size && size > MAX_FILE_SIZE) {
       notification.error({
         message: `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
-          0,
+          0
         )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`,
       });
 

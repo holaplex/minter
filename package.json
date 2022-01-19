@@ -21,7 +21,7 @@
   },
   "repository": "git+https://github.com/holaplex/ui.git",
   "author": "Holaplex Maintainers <engineering@holaplex.com>",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/holaplex/ui/issues"
   },

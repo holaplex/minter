@@ -69,7 +69,7 @@ export default function NavContainer({
               goToStep!(0);
             } else if (
               window.confirm(
-                'Are you sure you want cancel? This will exit the minter and all progress will be lost.',
+                'Are you sure you want cancel? This will exit the minter and all progress will be lost.'
               )
             ) {
               onClose();
@@ -78,9 +78,7 @@ export default function NavContainer({
           style={{ fontStyle: 'normal' }}
         >
           {altClearText ? (
-            <AltClearTextLink noStyle type="text">
-              {altClearText}
-            </AltClearTextLink>
+            <AltClearTextLink type="text">{altClearText}</AltClearTextLink>
           ) : (
             <img width={24} height={24} src={XCloseIcon} alt="x-close" />
           )}

@@ -1,4 +1,4 @@
-import { Divider, Input, Form, FormInstance, Row, Upload } from 'antd';
+import { Divider, Input, Form, FormInstance, Row, Upload, Button } from 'antd';
 import React, { useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -7,7 +7,6 @@ import { FormListFieldData } from 'antd/lib/form/FormList';
 import { FilePreview, FormValues, MintDispatch, NFTAttribute, NFTFormValue } from '../index';
 import Text from 'antd/lib/typography/Text';
 import { is3DFile, isAudio, isVideo } from '../../../utils/files';
-import Button from '../../../components/Button';
 import NavContainer from './NavContainer';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import { StyledClearButton } from './RoyaltiesCreators';
@@ -51,7 +50,7 @@ const StyledButton = styled(Button)`
 
 const AttributeClearButton = (props: { onClick: () => void }) => {
   return (
-    <StyledButton {...props} noStyle={true}>
+    <StyledButton {...props}>
       <img width={24} height={24} src={XCloseIcon} alt="remove-attribute" />
     </StyledButton>
   );
@@ -132,9 +131,9 @@ export default function InfoScreen({
             errorInfo.errorFields // only handle attribute errors
               .filter((ef) => ef.name.includes('attributes'))
               .map((ef) => ef?.errors)
-              .flat(),
+              .flat()
           );
-        },
+        }
       );
   };
 
@@ -278,7 +277,7 @@ export default function InfoScreen({
                   async validator(_, value: NFTAttribute[]) {
                     const traitTypes = value.map((a) => a?.trait_type);
                     const indexOfDuplicate = traitTypes.findIndex(
-                      (a, i) => traitTypes.indexOf(a) !== i,
+                      (a, i) => traitTypes.indexOf(a) !== i
                     );
                     if (indexOfDuplicate !== -1) {
                       throw new Error();
@@ -311,7 +310,7 @@ export default function InfoScreen({
                     </div>
                   ))}
                   {fields.length < 10 && (
-                    <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
+                    <StyledClearButton onClick={() => add()} type="default">
                       Add Attribute
                     </StyledClearButton>
                   )}

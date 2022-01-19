@@ -1,11 +1,10 @@
-import { Divider, Form, Space, Row } from 'antd';
+import { Divider, Form, Space, Row, Button } from 'antd';
 import React from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 
 import { Radio } from 'antd';
 import NavContainer from './NavContainer';
-import Button from '../../../components/Button';
 
 const Grid = styled.div`
   display: grid;

@@ -1,5 +1,5 @@
 import NavContainer from './NavContainer';
-import { FormInstance, PageHeader, Row, Space, Typography, notification } from 'antd';
+import { FormInstance, PageHeader, Row, Space, Typography, notification, Button } from 'antd';
 import React, { useState, useMemo } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -12,7 +12,6 @@ import {
   STORAGE_UPLOAD_ENDPOINT,
 } from '../index';
 import { Spinner } from '../../../components/Spinner';
-import Button from '../../../components/Button';
 
 const Grid = styled.div`
   display: grid;

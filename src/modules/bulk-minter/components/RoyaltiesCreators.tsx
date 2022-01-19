@@ -10,6 +10,7 @@ import {
   Radio,
   Col,
   Modal,
+  Button,
 } from 'antd';
 import { toast } from 'react-toastify';
 import Paragraph from 'antd/lib/typography/Paragraph';
@@ -30,7 +31,6 @@ import {
 } from '../index';
 
 import { isNil } from 'ramda';
-import Button from '../../../components/Button';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import CommunityFundInfo from '../../../components/CommunityFundInfo';
 
@@ -122,19 +122,16 @@ const StyledRadio = styled(Radio)`
 `;
 
 // TODO: Extract to the Button component since this style is so common
-export const StyledClearButton = styled(Button)`
+export const StyledClearButton = styled((props) => <Button {...props} />)`
   font-size: 14px;
-  color: #b92d44;
   height: fit-content;
   margin-bottom: 1em;
 
   &:focus {
     background: transparent;
-    color: #b92d44;
   }
   &:hover {
     background: transparent;
-    color: #f4f4f4;
   }
 `;
 
@@ -154,10 +151,8 @@ const StyledPercentageInput = styled(InputNumber)`
 const LightText = styled(Paragraph)`
   font-size: 14px;
   cursor: pointer;
-  background: linear-gradient(143.77deg, #d24089 8.62%, #b92d44 84.54%);
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
 `;
 
 const StyledCloseIcon = styled.svg`
@@ -248,7 +243,11 @@ const CreatorsRow = ({
       {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
       <span style={{ marginLeft: 'auto' }}></span>
       {isHolaplex && (
-        <LightText onClick={() => setIsModalVisible(true)} style={{ marginRight: 5 }}>
+        <LightText
+          onClick={() => setIsModalVisible(true)}
+          style={{ marginRight: 5 }}
+          className="text-theme-color"
+        >
           Learn more
         </LightText>
       )}
@@ -266,7 +265,6 @@ const CreatorsRow = ({
               setShowPercentageInput(false);
             }
           }}
-          // controls={false} // not supported in this version of antd, upgrade?
         />
       ) : (
         <Paragraph
@@ -376,11 +374,11 @@ export default function RoyaltiesCreators({
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const [creators, setCreators] = useState<Array<Creator>>(
-    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }],
+    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
-    previousNFT ? previousNFT.seller_fee_basis_points : ROYALTIES_INPUT_DEFAULT,
+    previousNFT ? previousNFT.seller_fee_basis_points : ROYALTIES_INPUT_DEFAULT
   );
   const [totalRoyaltyShares, setTotalRoyaltiesShare] = useState<number>(0);
   const [showErrors, setShowErrors] = useState<boolean>(false);
@@ -570,7 +568,11 @@ export default function RoyaltiesCreators({
           {creators.length < MAX_CREATOR_LIMIT && (
             <Row justify="space-between" align="middle">
               <Paragraph style={{ fontWeight: 900 }}>Creators split</Paragraph>
-              <StyledClearButton type="text" noStyle onClick={() => toggleCreatorField(true)}>
+              <StyledClearButton
+                className="text-theme-color"
+                type="text"
+                onClick={() => toggleCreatorField(true)}
+              >
                 Add Creator
               </StyledClearButton>
             </Row>
@@ -752,7 +754,6 @@ export default function RoyaltiesCreators({
               {files.length > 1 && isFirst && (
                 <StyledClearButton
                   type="text"
-                  noStyle
                   onClick={() => {
                     setDoEachRoyaltyInd(true);
                     next();
