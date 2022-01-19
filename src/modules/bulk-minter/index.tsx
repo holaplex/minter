@@ -14,6 +14,7 @@ import { isNil } from 'ramda';
 import OffRampScreen from './components/OffRamp';
 import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '../../utils/files';
+import { Wallet } from '@metaplex/js';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -188,36 +189,19 @@ function reducer(state: State, action: MintAction) {
 interface Props {
   connection: Connection;
   storefront: any;
-  wallet: any;
+  wallet: Wallet;
   track: any;
-  connect: any;
   holaSignMetadata: any;
   onClose: () => void;
-  solana: any;
 }
 
-function BulkMinter({
-  wallet,
-  connect,
-  storefront,
-  connection,
-  track,
-  holaSignMetadata,
-  onClose,
-  solana,
-}: Props) {
+function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, wallet }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
 
   const { files, formValues, filePreviews } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
-
-  useEffect(() => {
-    if (!wallet) {
-      connect('/nfts/new');
-    }
-  }, [wallet, connect]);
 
   const uploadCoverImage = async (file: File) => {
     const body = new FormData();
@@ -350,9 +334,10 @@ function BulkMinter({
     }
   }
 
-  if (!wallet || !solana) {
+  if (!wallet) {
     return null;
   }
+  const pubKey = wallet.publicKey.toBase58();
 
   return (
     <Form
@@ -401,7 +386,7 @@ function BulkMinter({
             files={files}
             filePreviews={filePreviews}
             form={form}
-            userKey={wallet.pubkey}
+            userKey={pubKey}
             formValues={state.formValues}
             dispatch={dispatch}
             isFirst={true}
@@ -419,7 +404,7 @@ function BulkMinter({
                   files={files}
                   filePreviews={filePreviews}
                   form={form}
-                  userKey={wallet.pubkey}
+                  userKey={pubKey}
                   formValues={state.formValues}
                   dispatch={dispatch}
                   key={index + 1}
@@ -456,7 +441,7 @@ function BulkMinter({
               key={index}
               files={files}
               filePreviews={filePreviews}
-              wallet={solana}
+              wallet={wallet}
               connection={connection}
               uploadMetaData={uploadMetaData}
               nftValues={state.nftValues}

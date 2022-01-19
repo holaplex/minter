@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import { Coingecko, Currency } from '@metaplex/js';
+import { Coingecko, Currency, Wallet } from '@metaplex/js';
 import NavContainer from './NavContainer';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { FilePreview } from '..';
@@ -35,7 +35,7 @@ interface Props extends Partial<StepWizardChildProps> {
   connection: Connection;
   onClose: () => void;
   track: any; // need to figure out how to import types for this and wallet
-  wallet: any;
+  wallet: Wallet;
 }
 
 export default function PriceSummary({
@@ -58,7 +58,7 @@ export default function PriceSummary({
   useEffect(() => {
     if (wallet) {
       connection
-        .getBalance(new PublicKey(wallet.pubkey))
+        .getBalance(new PublicKey(wallet.publicKey.toBase58()))
         .then((balance) => setSolBalance(balance / LAMPORTS_PER_SOL));
     }
   }, [wallet, connection]);

@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import BN from 'bn.js';
 import { Spinner } from '../../../components/Spinner';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
+import { Wallet } from '@metaplex/js';
 
 const { mintNFT } = actions;
 
@@ -91,7 +92,7 @@ const MintStep = ({
 interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   filePreviews: Array<FilePreview>;
-  wallet: any; // type this properly
+  wallet: Wallet;
   connection: Connection;
   nftValues: NFTValue[];
   index: number;
