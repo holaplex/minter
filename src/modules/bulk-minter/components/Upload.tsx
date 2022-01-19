@@ -115,7 +115,7 @@ export default function UploadStep({ nextStep, dispatch, onClose }: Props) {
   return (
     <NavContainer onClose={onClose}>
       <StyledLayout>
-        <Header>Add images or videos huh to create NFTs</Header>
+        <Header>Add images or videos here to create NFTs</Header>
         <Dragger {...draggerProps}>
           <StyledSpace direction="vertical" size={24}>
             <Space direction="vertical">

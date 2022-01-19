@@ -1,15 +1,13 @@
 import typescript from 'rollup-plugin-typescript2';
 import ttypescript from 'ttypescript';
 import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import images from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { terser } from 'rollup-plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import lessToJs from 'less-vars-to-js';
 import postcss from 'rollup-plugin-postcss'
-import less from 'rollup-plugin-less';
+import image from 'rollup-plugin-img';
 import fs from 'fs';
 import lessTildeImporter from '@ovh-ux/rollup-plugin-less-tilde-importer';
 import path from 'path';
@@ -18,7 +16,6 @@ const antdLess = fs.readFileSync('./ant-theme.less', 'utf8');
 
 const antdVars = lessToJs(antdLess, {resolveVariables: true, stripPrefix: true});
 
-console.log({antdVars})
 
 const input = 'src/index.ts';
 
@@ -33,11 +30,6 @@ const plugins = ({ browser }) => [
         module: 'ES2015',
       },
     },
-  }),
-  resolve({
-    browser,
-    dedupe: ['bn.js', 'buffer', 'crypto-hash'],
-    preferBuiltins: !browser,
   }),
   lessTildeImporter({
     paths: [
@@ -54,28 +46,21 @@ const plugins = ({ browser }) => [
     }, 
    extract: true
 }),
-  // less({insert: true,option: {javascriptEnabled: true, modifyVars: antdVars}}),
   commonjs(),
   json(),
-  images(),
+  image({
+    output: 'lib/assets/images', // default the root
+    extensions: /\.(png|jpg|jpeg|gif|svg)$/, // support png|jpg|jpeg|gif|svg, and it's alse the default value
+    limit: 300000, 
+    exclude: 'node_modules/**'
+  })
+ 
 ];
 
 const config = ({ browser, format } = { browser: false }) => {
   const config = {
     input,
     plugins: plugins({ browser }),
-    // Default external, can be overrided
-    external: [
-      '@solana/spl-token',
-      '@solana/web3.js',
-      '@types/bs58',
-      'axios',
-      'bn.js',
-      'borsh',
-      'bs58',
-      'buffer',
-      'crypto-hash',
-    ],
   };
 
   if (browser) {
@@ -108,7 +93,6 @@ const config = ({ browser, format } = { browser: false }) => {
           },
         ];
         config.context = 'window';
-        config.external = ['@solana/web3.js', '@solana/spl-token'];
         break;
       default:
         throw new Error(`Unknown format: ${format}`);

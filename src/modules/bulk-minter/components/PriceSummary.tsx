@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import { Coingecko, Currency, Wallet } from '@metaplex/js';
+import { Coingecko, Currency } from '@metaplex/js';
 import NavContainer from './NavContainer';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { FilePreview } from '..';
@@ -35,7 +35,7 @@ interface Props extends Partial<StepWizardChildProps> {
   connection: Connection;
   onClose: () => void;
   track: any; // need to figure out how to import types for this and wallet
-  wallet: Wallet;
+  pubKey: string;
 }
 
 export default function PriceSummary({
@@ -45,7 +45,7 @@ export default function PriceSummary({
   files,
   nextStep,
   connection,
-  wallet,
+  pubKey,
   track,
   onClose,
 }: Props) {
@@ -56,12 +56,12 @@ export default function PriceSummary({
     (solBalanceInLamports === -1 || solBalanceInLamports) >= totalSolCost * SOL_COST_PER_NFT;
 
   useEffect(() => {
-    if (wallet) {
+    if (pubKey) {
       connection
-        .getBalance(new PublicKey(wallet.publicKey.toBase58()))
+        .getBalance(new PublicKey(pubKey))
         .then((balance) => setSolBalance(balance / LAMPORTS_PER_SOL));
     }
-  }, [wallet, connection]);
+  }, [pubKey, connection]);
 
   useEffect(() => {
     const total = files.length * SOL_COST_PER_NFT;
@@ -71,10 +71,6 @@ export default function PriceSummary({
       setTotalInUSD(rate * total);
     });
   }, [files, setTotalSolCost, setTotalInUSD]);
-
-  if (!wallet) {
-    return null;
-  }
 
   const handleNext = () => {
     track('Mint price Confirmed', {

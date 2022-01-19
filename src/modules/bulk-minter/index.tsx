@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from './components/Upload';
@@ -14,7 +14,6 @@ import { isNil } from 'ramda';
 import OffRampScreen from './components/OffRamp';
 import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '../../utils/files';
-import { Wallet } from '@metaplex/js';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -189,7 +188,7 @@ function reducer(state: State, action: MintAction) {
 interface Props {
   connection: Connection;
   storefront: any;
-  wallet: Wallet;
+  wallet: any;
   track: any;
   holaSignMetadata: any;
   onClose: () => void;
@@ -338,7 +337,6 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
     return null;
   }
   const pubKey = wallet.publicKey.toBase58();
-
   return (
     <Form
       name="bulk-mint"
@@ -434,7 +432,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
             hashKey="priceSummary"
             onClose={onClose}
             track={track}
-            wallet={wallet}
+            pubKey={pubKey}
           />
           {files.map((_, index) => (
             <MintInProgress

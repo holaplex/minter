@@ -18,6 +18,8 @@ import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '../../../assets/images/clipboard.svg';
+import holaplexLogo from '../../../assets/images/holaplex-logo.svg';
+import creatorStandinImg from '../../../assets/images/creator-standin.png';
 import {
   MAX_CREATOR_LIMIT,
   MintDispatch,
@@ -215,9 +217,9 @@ const CreatorsRow = ({
   return (
     <StyledCreatorsRow>
       {isHolaplex ? (
-        <img height={32} width={32} src="/images/hola-logo.svg" alt="holaplex-logo" />
+        <img height={32} width={32} src={holaplexLogo} alt="holaplex-logo" />
       ) : (
-        <img height={32} width={32} src="/images/creator-standin.png" alt="creator" />
+        <img height={32} width={32} src={creatorStandinImg} alt="creator" />
       )}
       <Paragraph
         style={{

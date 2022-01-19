@@ -188,7 +188,8 @@ export default function Summary({
       dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
       setNFTValues(uploadedFilePins.files);
       nextStep!();
-    } catch {
+    } catch (e) {
+      console.log('summary error is', e);
       notification.error({ message: 'Upload of assets to IPFS failed, please try again' });
       setUploadFailed(true);
       setIsUploading(false);
