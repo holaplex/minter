@@ -1,5 +1,5 @@
 {
-  "name": "holaplex-ui",
+  "name": "@holaplex/ui",
   "version": "0.0.1",
   "description": "Holaplex UI",
   "main": "lib/index.cjs.js",
@@ -16,10 +16,11 @@
   "scripts": {
     "build": "rimraf lib && rollup -c",
     "dev": "rollup -c --watch",
-    "dev-watch": "tsc-watch --onSuccess \"yalc push\""
+    "dev-watch": "tsc-watch --onSuccess \"yalc push\"",
+    "deploy": "npm run build && npm version patch --force && npm publish"
   },
   "repository": "git+https://github.com/holaplex/ui.git",
-  "author": "dtorbeck@holaplex.com",
+  "author": "Holaplex Maintainers <engineering@holaplex.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/holaplex/ui/issues"

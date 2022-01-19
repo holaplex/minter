@@ -224,7 +224,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
   const transformFormVal = async (
     value: NFTFormValue,
     index: number,
-    filePins: UploadedFilePin[],
+    filePins: UploadedFilePin[]
   ) => {
     const filePin = filePins[index];
 
@@ -287,7 +287,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
     }
 
     const nftVals = await Promise.all(
-      formValues.map((v, i: number) => transformFormVal(v, i, filePins)),
+      formValues.map((v, i: number) => transformFormVal(v, i, filePins))
     );
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
