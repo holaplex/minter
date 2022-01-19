@@ -15,8 +15,8 @@ import OffRampScreen from './components/OffRamp';
 import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '../../utils/files';
 
-export const NFT_STORAGE_UPLOAD_ENDPOINT =
-  process.env.NFT_STORAGE_UPLOAD_ENDPOINT || '/api/ipfs/upload';
+export const STORAGE_UPLOAD_ENDPOINT =
+  process.env.NEXT_PUBLIC_STORAGE_UPLOAD_ENDPOINT || '/api/ipfs/upload';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -210,7 +210,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
     body.append(file.name, file, file.name);
 
     try {
-      const resp = await fetch(NFT_STORAGE_UPLOAD_ENDPOINT, {
+      const resp = await fetch(STORAGE_UPLOAD_ENDPOINT, {
         method: 'POST',
         body,
       });
@@ -311,7 +311,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
     const metaData = new File([JSON.stringify(nftWithHolaplexAsLastCreator)], 'metadata');
     const metaDataFileForm = new FormData();
     metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
-    const resp = await fetch(NFT_STORAGE_UPLOAD_ENDPOINT, {
+    const resp = await fetch(STORAGE_UPLOAD_ENDPOINT, {
       body: metaDataFileForm,
       method: 'POST',
     });

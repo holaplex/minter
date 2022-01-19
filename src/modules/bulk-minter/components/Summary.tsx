@@ -9,7 +9,7 @@ import {
   NFTFormValue,
   UploadedFilePin,
   FilePreview,
-  NFT_STORAGE_UPLOAD_ENDPOINT,
+  STORAGE_UPLOAD_ENDPOINT,
 } from '../index';
 import { Spinner } from '../../../components/Spinner';
 import Button from '../../../components/Button';
@@ -186,7 +186,7 @@ export default function Summary({
         items,
       });
 
-      const resp = await fetch(NFT_STORAGE_UPLOAD_ENDPOINT, {
+      const resp = await fetch(STORAGE_UPLOAD_ENDPOINT, {
         method: 'POST',
         body,
       });
