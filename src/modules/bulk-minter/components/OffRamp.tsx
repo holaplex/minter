@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import NavContainer from './NavContainer';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { Button, Divider, PageHeader, Row } from 'antd';
-import { FilePreview, MintStatus, NFTValue } from '../index';
+import { FilePreview, MintDispatch, MintStatus, NFTValue } from '../index';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import React from 'react';
@@ -47,10 +47,12 @@ interface Props extends Partial<StepWizardChildProps> {
   onClose: () => void;
   nftValues: NFTValue[];
   storefront?: any;
+  dispatch: MintDispatch;
 }
 
 export default function OffRampScreen({
   goToStep,
+  dispatch,
   onClose,
   files,
   filePreviews,
@@ -132,7 +134,10 @@ export default function OffRampScreen({
             ) : (
               <Button
                 type="primary"
-                onClick={() => goToStep!(1)}
+                onClick={() => {
+                  dispatch({ type: 'RESET_FORM', payload: [] });
+                  goToStep!(1);
+                }}
                 style={{ height: 'fit-content', marginTop: 38 }}
               >
                 Start Over
