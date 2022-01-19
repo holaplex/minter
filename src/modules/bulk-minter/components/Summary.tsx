@@ -3,7 +3,14 @@ import { FormInstance, PageHeader, Row, Space, Typography, notification } from '
 import React, { useState, useMemo } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
-import { NFTAttribute, MintDispatch, NFTFormValue, UploadedFilePin, FilePreview } from '../index';
+import {
+  NFTAttribute,
+  MintDispatch,
+  NFTFormValue,
+  UploadedFilePin,
+  FilePreview,
+  NFT_STORAGE_UPLOAD_ENDPOINT,
+} from '../index';
 import { Spinner } from '../../../components/Spinner';
 import Button from '../../../components/Button';
 
@@ -98,7 +105,7 @@ const SummaryItem = ({
             <Paragraph style={{ width: 110 }}>{attribute.trait_type}:</Paragraph>
             <Paragraph>{attribute.value}</Paragraph>
           </Attribute>
-        ) : null,
+        ) : null
       )}
       {showCreatorCount && (
         <Attribute>
@@ -142,7 +149,7 @@ export default function Summary({
   const showRoyaltyPercentage = useMemo(() => {
     return (
       formValues?.some((nft1) =>
-        formValues.some((nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points),
+        formValues.some((nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points)
       ) ?? false
     );
   }, [formValues]);
@@ -152,10 +159,10 @@ export default function Summary({
     () =>
       formValues?.some((nft1) =>
         formValues.some(
-          (nft2) => nft1.properties.creators.length !== nft2.properties.creators.length,
-        ),
+          (nft2) => nft1.properties.creators.length !== nft2.properties.creators.length
+        )
       ) ?? false,
-    [formValues],
+    [formValues]
   );
 
   const upload = async () => {
@@ -179,7 +186,7 @@ export default function Summary({
         items,
       });
 
-      const resp = await fetch('/api/ipfs/upload', {
+      const resp = await fetch(NFT_STORAGE_UPLOAD_ENDPOINT, {
         method: 'POST',
         body,
       });
@@ -223,7 +230,7 @@ export default function Summary({
                   showRoyaltyPercentage={showRoyaltyPercentage}
                   showCreatorCount={showCreatorCount}
                 />
-              ),
+              )
           )}
         </Grid>
       </Row>
