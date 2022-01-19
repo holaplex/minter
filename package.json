@@ -18,6 +18,7 @@
     "dev": "rollup -c --watch",
     "dev-watch": "tsc-watch --onSuccess \"yalc push\"",
     "publish": "npm publish --access=public",
+    "publish-bump": "npm version patch --force && npm publish --access=public",
     "deploy": "yarn build && npm version patch --force && npm publish --access=public"
   },
   "private": false,
