@@ -66,10 +66,10 @@ export default function NavContainer({
         <XClose
           onClick={() => {
             if (altClearText) {
-              goToStep!(0);
+              goToStep!(1);
             } else if (
               window.confirm(
-                'Are you sure you want cancel? This will exit the minter and all progress will be lost.',
+                'Are you sure you want cancel? This will exit the minter and all progress will be lost.'
               )
             ) {
               onClose();
