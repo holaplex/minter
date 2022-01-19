@@ -33,6 +33,7 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: yarn publish-bump
+      - run: npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_HOLAPLEX_UI_PUBLISH_TOKEN}}
+          NPM_TOKEN: ${{secrets.NPM_HOLAPLEX_UI_PUBLISH_TOKEN}}
