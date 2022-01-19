@@ -1,5 +1,5 @@
 {
-  "name": "holaplex-ui",
+  "name": "@holaplex/ui",
   "version": "0.0.1",
   "description": "Holaplex UI",
   "main": "lib/index.cjs.js",
@@ -19,7 +19,7 @@
     "dev-watch": "tsc-watch --onSuccess \"yalc push\""
   },
   "repository": "git+https://github.com/holaplex/ui.git",
-  "author": "dtorbeck@holaplex.com",
+  "author": "Holaplex Maintainers <engineering@holaplex.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/holaplex/ui/issues"

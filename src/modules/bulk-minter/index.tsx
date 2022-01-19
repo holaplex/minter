@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from './components/Upload';
@@ -225,7 +225,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
   const transformFormVal = async (
     value: NFTFormValue,
     index: number,
-    filePins: UploadedFilePin[],
+    filePins: UploadedFilePin[]
   ) => {
     const filePin = filePins[index];
 
@@ -288,7 +288,7 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
     }
 
     const nftVals = await Promise.all(
-      formValues.map((v, i: number) => transformFormVal(v, i, filePins)),
+      formValues.map((v, i: number) => transformFormVal(v, i, filePins))
     );
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
