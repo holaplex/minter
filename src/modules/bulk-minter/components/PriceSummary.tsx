@@ -31,10 +31,10 @@ async function getSolRate() {
 interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   filePreviews: Array<FilePreview>;
-  connection: Connection;
   onClose: () => void;
   track: any; // need to figure out how to import types for this and wallet
   pubKey: string;
+  connection: Connection;
 }
 
 export default function PriceSummary({
@@ -43,10 +43,10 @@ export default function PriceSummary({
   filePreviews,
   files,
   nextStep,
-  connection,
   pubKey,
   track,
   onClose,
+  connection,
 }: Props) {
   const [totalSolCost, setTotalSolCost] = useState(files.length * SOL_COST_PER_NFT);
   const [totalInUSD, setTotalInUSD] = useState(0.0);
@@ -56,9 +56,9 @@ export default function PriceSummary({
 
   useEffect(() => {
     if (pubKey) {
-      connection
-        .getBalance(new PublicKey(pubKey))
-        .then((balance) => setSolBalance(balance / LAMPORTS_PER_SOL));
+      connection.getBalance(new PublicKey(pubKey)).then((balance) => {
+        setSolBalance(balance / LAMPORTS_PER_SOL);
+      });
     }
   }, [pubKey, connection]);
 

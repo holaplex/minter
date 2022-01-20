@@ -12,8 +12,8 @@ import PriceSummary from './components/PriceSummary';
 import MintInProgress from './components/MintInProgress';
 import { isNil } from 'ramda';
 import OffRampScreen from './components/OffRamp';
-import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '../../utils/files';
+import { Connection } from '@solana/web3.js';
 
 export const STORAGE_UPLOAD_ENDPOINT =
   process.env.NEXT_PUBLIC_STORAGE_UPLOAD_ENDPOINT || '/api/ipfs/upload';
@@ -52,7 +52,7 @@ export interface NFTFormValue {
   collectionFamily: string;
   attributes: Array<NFTAttribute>;
   seller_fee_basis_points: number;
-  properties: { creators: Array<Creator>; maxSupply: number };
+  properties: { creators: Array<Creator>; maxSupply?: number };
 }
 
 export type FileOrString = NFTFile | string;
@@ -91,7 +91,7 @@ export interface NFTValue {
 
   properties: {
     files: FileOrString[];
-    maxSupply: number;
+    maxSupply?: number;
     creators?: Creator[];
     category: NFTCategory;
   };
@@ -189,15 +189,24 @@ function reducer(state: State, action: MintAction) {
 }
 
 interface Props {
-  connection: Connection;
   storefront: any;
   wallet: any;
   track: any;
   holaSignMetadata: any;
   onClose: () => void;
+  connection: Connection;
+  savedEndpoint?: string;
 }
 
-function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, wallet }: Props) {
+function BulkMinter({
+  storefront,
+  track,
+  holaSignMetadata,
+  onClose,
+  wallet,
+  connection,
+  savedEndpoint,
+}: Props) {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
 
@@ -340,6 +349,8 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
     return null;
   }
   const pubKey = wallet.publicKey.toBase58();
+
+  console.log('saved end point in blk minter', savedEndpoint);
   return (
     <Form
       name="bulk-mint"
@@ -431,11 +442,11 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
           <PriceSummary
             files={files}
             filePreviews={filePreviews}
-            connection={connection}
             hashKey="priceSummary"
             onClose={onClose}
             track={track}
             pubKey={pubKey}
+            connection={connection}
           />
           {files.map((_, index) => (
             <MintInProgress
@@ -443,7 +454,6 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
               files={files}
               filePreviews={filePreviews}
               wallet={wallet}
-              connection={connection}
               uploadMetaData={uploadMetaData}
               nftValues={state.nftValues}
               updateNFTValue={updateNFTValue}
@@ -453,6 +463,8 @@ function BulkMinter({ storefront, connection, track, holaSignMetadata, onClose, 
               isLast={index === files.length - 1}
               track={track}
               holaSignMetadata={holaSignMetadata}
+              connection={connection}
+              savedEndpoint={savedEndpoint}
             />
           ))}
           <OffRampScreen

@@ -310,7 +310,11 @@ export default function InfoScreen({
                     </div>
                   ))}
                   {fields.length < 10 && (
-                    <StyledClearButton onClick={() => add()} type="default">
+                    <StyledClearButton
+                      onClick={() => add()}
+                      type="default"
+                      className="no-style-btn text-theme-color "
+                    >
                       Add Attribute
                     </StyledClearButton>
                   )}

@@ -11,6 +11,7 @@ import image from 'rollup-plugin-img';
 import fs from 'fs';
 import lessTildeImporter from '@ovh-ux/rollup-plugin-less-tilde-importer';
 import path from 'path';
+import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const antdLess = fs.readFileSync('./ant-theme.less', 'utf8');
 
@@ -53,7 +54,8 @@ const plugins = ({ browser }) => [
     extensions: /\.(png|jpg|jpeg|gif|svg)$/, // support png|jpg|jpeg|gif|svg, and it's alse the default value
     limit: 300000, 
     exclude: 'node_modules/**'
-  })
+  }),
+  sourcemaps()
  
 ];
 

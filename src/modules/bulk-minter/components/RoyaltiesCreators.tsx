@@ -30,7 +30,6 @@ import {
   FilePreview,
 } from '../index';
 
-import { isNil } from 'ramda';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import CommunityFundInfo from '../../../components/CommunityFundInfo';
 
@@ -383,7 +382,7 @@ export default function RoyaltiesCreators({
   const [totalRoyaltyShares, setTotalRoyaltiesShare] = useState<number>(0);
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [editionsSelection, setEditionsSelection] = useState('one');
-  const [maxSupply, setMaxSupply] = useState<number>(MAX_SUPPLY_ONE_OF_ONE);
+  const [maxSupply, setMaxSupply] = useState<number | undefined>(MAX_SUPPLY_ONE_OF_ONE);
   const royaltiesPercentage = royaltiesBasisPoints / 100;
   const royaltiesRef = useRef(royaltiesBasisPoints);
 
@@ -442,8 +441,8 @@ export default function RoyaltiesCreators({
 
         if (formValues) {
           const newFormValues = formValues.map((formValue) => {
-            if (!creators.length || isNil(maxSupply) || !royaltiesBasisPoints) {
-              throw new Error('No creators, maxSupply, or royalties input');
+            if (!creators.length || !royaltiesBasisPoints) {
+              throw new Error('No creators,  or royalties input');
             }
             formValue.properties = { creators, maxSupply };
             formValue.seller_fee_basis_points = royaltiesBasisPoints;
@@ -466,8 +465,8 @@ export default function RoyaltiesCreators({
       if (formValues) {
         const currentNFTFormValue = formValues[index];
 
-        if (!creators.length || isNil(maxSupply) || !royaltiesBasisPoints) {
-          throw new Error('No creators, maxSupply, or royalties input');
+        if (!creators.length || !royaltiesBasisPoints) {
+          throw new Error('No creators, or royalties input');
         }
 
         currentNFTFormValue.properties = { creators, maxSupply };
@@ -686,6 +685,8 @@ export default function RoyaltiesCreators({
                   setEditionsSelection(value);
                   if (value === 'one') {
                     setMaxSupply(MAX_SUPPLY_ONE_OF_ONE);
+                  } else if (value == 'unlimited') {
+                    setMaxSupply(undefined);
                   }
                 }}
                 value={editionsSelection}
@@ -704,7 +705,15 @@ export default function RoyaltiesCreators({
                       Limited Edition
                     </StyledRadio>
                     <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                      A fixed number of identical NFT will be minted.
+                      A fixed number of identical NFTs will be minted.
+                    </Paragraph>
+                  </Col>
+                  <Col>
+                    <StyledRadio value="unlimited" style={{ fontWeight: 900 }}>
+                      Unlimited
+                    </StyledRadio>
+                    <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                      As many NFTs as you want.
                     </Paragraph>
                   </Col>
                 </Space>

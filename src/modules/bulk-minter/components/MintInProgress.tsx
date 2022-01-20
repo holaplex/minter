@@ -93,15 +93,16 @@ interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   filePreviews: Array<FilePreview>;
   wallet: Wallet; // type this properly
-  connection: Connection;
   nftValues: NFTValue[];
   index: number;
   isLast: boolean;
   updateNFTValue: (value: NFTValue, index: number) => void;
   uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
   onClose: () => void;
+  connection: Connection;
   track: any; // type this properly
   holaSignMetadata: any; // type this properly
+  savedEndpoint?: string;
 }
 
 export default function MintInProgress({
@@ -114,16 +115,18 @@ export default function MintInProgress({
   nftValues,
   wallet,
   updateNFTValue,
+  connection,
   uploadMetaData,
   onClose,
-  connection,
   index,
   isLast,
   track,
   holaSignMetadata,
+  savedEndpoint,
 }: Props) {
   const [transactionStep, setTransactionStep] = useState(TransactionStep.META_DATA_UPLOADING);
   const [mintResp, setMintResp] = useState<MintNFTResponse | null>(null);
+  const solanaEndpoint = savedEndpoint || process.env.NEXT_PUBLIC_SOLANA_ENDPOINT;
 
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
@@ -155,17 +158,16 @@ export default function MintInProgress({
     if (!mintResp) {
       throw new Error('No Mint Response, something went wrong');
     }
+    if (!solanaEndpoint) {
+      throw new Error('No Solana Endpoint');
+    }
 
     try {
-      if (!process.env.NEXT_PUBLIC_SOLANA_ENDPOINT) {
-        throw new Error('No Solana Endpoint');
-      }
-
       const metaProgramId = new PublicKey(META_PROGRAM_ID);
       const { metadata } = mintResp;
 
       await holaSignMetadata({
-        solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
+        solanaEndpoint,
         metadata,
         metaProgramId,
         onComplete: () => {
@@ -191,7 +193,10 @@ export default function MintInProgress({
       setTransactionStep(TransactionStep.APPROVING);
 
       try {
-        const maxSupply = new BN(nftValue.properties.maxSupply);
+        let maxSupply = null;
+        if (nftValue.properties.maxSupply) {
+          maxSupply = new BN(nftValue.properties.maxSupply);
+        }
         const mintResp = await mintNFT({
           connection,
           wallet,
@@ -203,6 +208,7 @@ export default function MintInProgress({
         await connection.confirmTransaction(mintResp.txId);
         setTransactionStep(TransactionStep.SUCCESS);
       } catch (err) {
+        console.error(err);
         if (err?.code === APPROVAL_FAILED_CODE) {
           setTransactionStep(TransactionStep.APPROVAL_FAILED);
         } else {
@@ -214,7 +220,7 @@ export default function MintInProgress({
 
       setTransactionStep(TransactionStep.SIGNING);
     },
-    [nftValue, connection, wallet],
+    [nftValue, connection, wallet]
   );
 
   const attemptMetaDataUpload = useCallback(async () => {
@@ -350,7 +356,7 @@ export default function MintInProgress({
                       setTransactionStep(
                         transactionStep === TransactionStep.SIGNING_FAILED
                           ? TransactionStep.SIGNING
-                          : TransactionStep.APPROVING,
+                          : TransactionStep.APPROVING
                       );
                     }}
                   >
