@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/holaplex/ui#readme",
   "dependencies": {
-    "@holaplex/js": "^4.3.2",
+    "@holaplex/js": "^4.3.3",
     "antd": "^4.16.7",
     "feather-icons-react": "^0.4.3",
     "ramda": "^0.27.2",
