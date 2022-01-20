@@ -116,7 +116,8 @@ export interface MintAction {
     | 'INSERT_COVER_IMAGE'
     | 'SET_FILE_PREVIEWS'
     | 'SET_FORM_VALUES'
-    | 'SET_NFT_VALUES';
+    | 'SET_NFT_VALUES'
+    | 'RESET_FORM';
   payload:
     | File[]
     | File
@@ -183,6 +184,8 @@ function reducer(state: State, action: MintAction) {
       return { ...state, formValues: action.payload as NFTFormValue[] };
     case 'SET_NFT_VALUES':
       return { ...state, nftValues: action.payload as NFTValue[] };
+    case 'RESET_FORM':
+      return initialState();
     default:
       throw new Error('No valid action for state');
   }
@@ -350,7 +353,6 @@ function BulkMinter({
   }
   const pubKey = wallet.publicKey.toBase58();
 
-  console.log('saved end point in blk minter', savedEndpoint);
   return (
     <Form
       name="bulk-mint"
@@ -469,6 +471,7 @@ function BulkMinter({
           ))}
           <OffRampScreen
             hashKey="success"
+            dispatch={dispatch}
             filePreviews={filePreviews}
             files={files}
             onClose={onClose}
