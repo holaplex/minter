@@ -44,7 +44,7 @@ interface Props extends Partial<StepWizardChildProps> {
   altClearText?: string;
   showNavigation?: boolean;
   onClose: () => void;
-  dispatch: MintDispatch;
+  dispatch?: MintDispatch;
 }
 
 export default function NavContainer({
@@ -69,7 +69,7 @@ export default function NavContainer({
         <XClose
           onClick={() => {
             if (altClearText) {
-              dispatch({ type: 'RESET_FORM', payload: [] });
+              dispatch!({ type: 'RESET_FORM', payload: [] });
               goToStep!(1);
             } else if (
               window.confirm(
