@@ -5,6 +5,7 @@ import ArrowLeft from '../../../assets/images/arrow-left.svg';
 import XCloseIcon from '../../../assets/images/x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { StyledClearButton } from './RoyaltiesCreators';
+import { MintDispatch } from '..';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -43,6 +44,7 @@ interface Props extends Partial<StepWizardChildProps> {
   altClearText?: string;
   showNavigation?: boolean;
   onClose: () => void;
+  dispatch: MintDispatch;
 }
 
 export default function NavContainer({
@@ -53,6 +55,7 @@ export default function NavContainer({
   goToStep,
   altClearText,
   showNavigation = true,
+  dispatch,
 }: Props) {
   return (
     <StyledLayout>
@@ -66,6 +69,7 @@ export default function NavContainer({
         <XClose
           onClick={() => {
             if (altClearText) {
+              dispatch({ type: 'RESET_FORM', payload: [] });
               goToStep!(1);
             } else if (
               window.confirm(

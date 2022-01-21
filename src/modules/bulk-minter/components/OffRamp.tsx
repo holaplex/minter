@@ -91,6 +91,7 @@ export default function OffRampScreen({
       goToStep={goToStep}
       onClose={onClose}
       altClearText="Mint more NFTs"
+      dispatch={dispatch}
     >
       <Row>
         <Wrapper>
