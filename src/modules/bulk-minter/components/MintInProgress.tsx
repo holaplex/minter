@@ -202,7 +202,7 @@ export default function MintInProgress({
           wallet,
           uri: metaData.uri,
           maxSupply,
-        });
+        }, true);
         setMintResp(mintResp);
         setTransactionStep(TransactionStep.FINALIZING);
         await connection.confirmTransaction(mintResp.txId);
