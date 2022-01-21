@@ -9,12 +9,11 @@ import NavContainer from './NavContainer';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { FilePreview, MintStatus, NFTValue, UploadedFilePin } from '../index';
 import styled from 'styled-components';
-import BN from 'bn.js';
+// import BN from 'bn.js';
 import { Spinner } from '../../../components/Spinner';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import { Wallet } from '@metaplex/js/lib/wallet';
-import { actions } from '@holaplex/js';
-
+import { actions } from '@metaplex/js';
 const { mintNFT } = actions;
 
 interface MintNFTResponse {
@@ -193,16 +192,12 @@ export default function MintInProgress({
       setTransactionStep(TransactionStep.APPROVING);
 
       try {
-        let maxSupply = null;
-        if (nftValue.properties.maxSupply) {
-          maxSupply = new BN(nftValue.properties.maxSupply);
-        }
         const mintResp = await mintNFT({
           connection,
           wallet,
           uri: metaData.uri,
-          maxSupply,
-        }, true);
+          maxSupply: nftValue.properties.maxSupply,
+        });
         setMintResp(mintResp);
         setTransactionStep(TransactionStep.FINALIZING);
         await connection.confirmTransaction(mintResp.txId);
