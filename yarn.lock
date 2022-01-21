@@ -286,11 +286,12 @@
   resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.9.2.tgz#aa57d36b172a16622ce27397dc0250670160ff86"
   integrity sha512-bFn6TJPvPHZDPQ0vYOx1O57A5t4cVjpxaYyYeq2OqOpbZ6+Rkq1PLdyYx8Do7Id1ZPr6WqOaIAxajZ7Jy56G/g==
 
-"@holaplex/js@^4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@holaplex/js/-/js-4.3.2.tgz#c5ebbf42104a8935106186d5cf46d19dabbe2cda"
-  integrity sha512-Xzax0+7N00FcfkaSra+vZZkOG6HYw81AV6YZEEEbzgWv+pR7X+d+dtL9jENRvg3TTAjJ2b3RSd6NlJ+mhptv5Q==
+"@holaplex/js@^4.3.3":
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/@holaplex/js/-/js-4.3.3.tgz#042fb713c4ff42cd469ec07aefe7fbe5dc7cbfe9"
+  integrity sha512-whQ/u5HDe0ddhpIRLJvOauSVEexnLsjkm6EQPrhJLJq6UKwo/rTBMI0RjWtXy3pZIxLfalq8ka2dQL04JQdmwQ==
   dependencies:
+    "@holaplex/solana-web3-tools" "^0.1.8"
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.30.2"
     "@types/bs58" "^4.0.1"
@@ -302,6 +303,13 @@
     buffer "^6.0.3"
     crypto-hash "^1.3.0"
     form-data "^4.0.0"
+
+"@holaplex/solana-web3-tools@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@holaplex/solana-web3-tools/-/solana-web3-tools-0.1.8.tgz#d68fd0b1a26971973d296fe24bf269bc0f6bf6ad"
+  integrity sha512-ujUsosJieGMbU2Z7SWD9MkAwaZ8Q3pVMhYFaJ20biEpZ2TYaBAAPGYCSyflwO5gL2qK0QprafZMgss+pRoKZ9A==
+  dependencies:
+    async-retry "^1.3.3"
 
 "@metaplex-foundation/mpl-auction@^0.0.2":
   version "0.0.2"
