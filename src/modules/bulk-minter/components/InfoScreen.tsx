@@ -38,10 +38,12 @@ const FormWrapper = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  background: #262626;
   border-radius: 4px;
   width: 39px;
   height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   img {
     opacity: 0.5;
@@ -50,7 +52,7 @@ const StyledButton = styled(Button)`
 
 const AttributeClearButton = (props: { onClick: () => void }) => {
   return (
-    <StyledButton {...props}>
+    <StyledButton {...props} className="attribute-clear-btn">
       <img width={24} height={24} src={XCloseIcon} alt="remove-attribute" />
     </StyledButton>
   );
@@ -268,18 +270,6 @@ export default function InfoScreen({
                   async validator(_, value: NFTAttribute[]) {
                     if (value.length === 1) return;
                     if (value.some((a) => !a?.trait_type)) {
-                      throw new Error();
-                    }
-                  },
-                },
-                {
-                  message: 'All attributes must be unique',
-                  async validator(_, value: NFTAttribute[]) {
-                    const traitTypes = value.map((a) => a?.trait_type);
-                    const indexOfDuplicate = traitTypes.findIndex(
-                      (a, i) => traitTypes.indexOf(a) !== i
-                    );
-                    if (indexOfDuplicate !== -1) {
                       throw new Error();
                     }
                   },

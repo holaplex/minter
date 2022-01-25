@@ -28,6 +28,7 @@ export interface Creator {
 const StyledLayout = styled(Layout)`
   width: 100%;
   overflow: hidden;
+  min-height: 100vh;
 `;
 
 interface NFTFile {

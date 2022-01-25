@@ -28,9 +28,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   ${({ isCurrent }) =>
     isCurrent &&
     `
-      
       .ant-image-img {
-        border: 2px solid #d24089; 
         border-radius: 4px;
       }
       
@@ -224,7 +222,12 @@ export const NFTPreviewGrid = ({
       </StyledModal>
       <Grid width={width}>
         {filePreviews.map((fp, i) => (
-          <ImageOverlay key={fp.file.name} isFinished={i < index} isCurrent={i === index}>
+          <ImageOverlay
+            key={fp.file.name}
+            isFinished={i < index}
+            isCurrent={i === index}
+            className={`image-overlay-preview ${i === index ? 'current' : ''}`}
+          >
             {getFilePreview(fp)}
             {i < index && getOverlayStatus(i, nftValues)}
           </ImageOverlay>

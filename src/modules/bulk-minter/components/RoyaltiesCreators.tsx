@@ -18,7 +18,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import useOnClickOutside from 'use-onclickoutside';
-import clipBoardIcon from '../../../assets/images/clipboard.svg';
+//@ts-ignore
+import FeatherIcon from 'feather-icons-react';
 import holaplexLogo from '../../../assets/images/holaplex-logo.svg';
 import creatorStandinImg from '../../../assets/images/creator-standin.png';
 import {
@@ -81,6 +82,8 @@ const StyledCreatorsRow = styled.div`
   .creator-row-icon {
     margin-right: 6px;
     cursor: pointer;
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -227,12 +230,9 @@ const CreatorsRow = ({
           : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
       </Paragraph>
       {!isHolaplex && (
-        <img
+        <FeatherIcon
           className="creator-row-icon"
-          height={20}
-          width={20}
-          src={clipBoardIcon}
-          alt="copyToClipboard"
+          icon="copy"
           onClick={() => {
             navigator.clipboard.writeText(creatorAddress);
             toast('Address copied to clipboard!');
@@ -320,6 +320,7 @@ const CreatorsRow = ({
             borderRadius: '10px',
             background: '#262626',
             padding: '114px 67px 47px 67px',
+            zIndex: 1033,
           }}
         >
           <CommunityFundInfo />
@@ -708,6 +709,42 @@ export default function RoyaltiesCreators({
                       A fixed number of identical NFTs will be minted.
                     </Paragraph>
                   </Col>
+                  {editionsSelection === 'limited' && (
+                    <Form.Item name="numberOfEditions">
+                      <Row>
+                        <Col>
+                          <Paragraph style={{ fontSize: 12 }}>Number of editions</Paragraph>
+                          <Form.Item
+                            name="numOfEditions"
+                            initialValue={1}
+                            rules={
+                              editionsSelection === 'limited'
+                                ? [
+                                    {
+                                      required: true,
+                                      message: 'Required',
+                                    },
+                                    {
+                                      type: 'number',
+                                      min: 1,
+                                      max: 100,
+                                      message: 'Must be between 1 and 100',
+                                    },
+                                  ]
+                                : []
+                            }
+                          >
+                            <InputNumber<number>
+                              min={1}
+                              max={100}
+                              placeholder="1-100"
+                              onChange={(n) => setMaxSupply(n)}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Form.Item>
+                  )}
                   <Col>
                     <StyledRadio value="unlimited" style={{ fontWeight: 900 }}>
                       Unlimited
@@ -717,43 +754,6 @@ export default function RoyaltiesCreators({
                     </Paragraph>
                   </Col>
                 </Space>
-                {/* TODO: Set as required and validate */}
-                {editionsSelection === 'limited' && (
-                  <Form.Item name="numberOfEditions">
-                    <Row>
-                      <Col>
-                        <Paragraph style={{ fontSize: 12 }}>Number of editions</Paragraph>
-                        <Form.Item
-                          name="numOfEditions"
-                          initialValue={1}
-                          rules={
-                            editionsSelection === 'limited'
-                              ? [
-                                  {
-                                    required: true,
-                                    message: 'Required',
-                                  },
-                                  {
-                                    type: 'number',
-                                    min: 1,
-                                    max: 100,
-                                    message: 'Must be between 1 and 100',
-                                  },
-                                ]
-                              : []
-                          }
-                        >
-                          <InputNumber<number>
-                            min={1}
-                            max={100}
-                            placeholder="1-100"
-                            onChange={(n) => setMaxSupply(n)}
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Form.Item>
-                )}
               </Radio.Group>
             </Form.Item>
           </Row>
