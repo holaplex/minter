@@ -114,7 +114,6 @@ export default function OffRampScreen({
                   <Button
                     type="primary"
                     onClick={() => (window.location.href = listingUrl)}
-                    // onClick={() => router.push(listingUrl)}
                     style={{ height: 'fit-content', marginTop: 38 }}
                   >
                     List on your Holaplex store
@@ -126,7 +125,6 @@ export default function OffRampScreen({
                   <Button
                     type="primary"
                     onClick={() => (window.location.href = 'https://holaplex.com/storefront/new')}
-                    // onClick={() => router.push('/storefront/new')}
                   >
                     Create your Free Store
                   </Button>
