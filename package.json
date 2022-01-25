@@ -1,6 +1,6 @@
 {
   "name": "@holaplex/ui",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Holaplex UI",
   "main": "lib/index.cjs.js",
   "types": "lib/index.d.ts",
