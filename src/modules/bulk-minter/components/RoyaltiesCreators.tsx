@@ -322,6 +322,7 @@ const CreatorsRow = ({
             padding: '114px 67px 47px 67px',
             zIndex: 1033,
           }}
+          wrapProps={{ zIndex: 1033 }}
         >
           <CommunityFundInfo />
         </Modal>
