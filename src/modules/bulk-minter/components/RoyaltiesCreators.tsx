@@ -38,7 +38,6 @@ const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
 
 const StyledDivider = styled(Divider)`
-  background-color: rgba(255, 255, 255, 0.1);
   height: 580px;
   margin: 0 46px;
 `;
@@ -63,10 +62,8 @@ const FormWrapper = styled.div`
 
 const StyledCreatorsRow = styled.div`
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   border-radius: 25px;
-  background: #262626;
   width: 100%;
   height: 50px;
   padding: 0 9px;
@@ -143,7 +140,10 @@ const StyledPercentageInput = styled(InputNumber)`
   border-radius: 4px;
   width: 70px;
   height: 32px;
-  background: rgba(255, 255, 255, 0.1);
+
+  .ant-input-number-handler-wrap {
+    display: none;
+  }
 
   input {
     height: 32px;
@@ -538,7 +538,7 @@ export default function RoyaltiesCreators({
       <Row>
         <FormWrapper>
           <Form.Item label="Royalties">
-            <Paragraph style={{ color: '#fff', opacity: 0.6, fontSize: 14, fontWeight: 400 }}>
+            <Paragraph style={{ opacity: 0.6, fontSize: 14, fontWeight: 400 }}>
               What percentage of future sales will you receive
             </Paragraph>
             <Form.Item

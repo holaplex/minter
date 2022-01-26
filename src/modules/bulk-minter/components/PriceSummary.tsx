@@ -12,10 +12,6 @@ import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 
 const SOL_COST_PER_NFT = 0.01;
 
-const StyledDivider = styled(Divider)`
-  background-color: rgba(255, 255, 255, 0.1);
-`;
-
 const ButtonFormItem = styled(Form.Item)`
   .ant-form-item-control-input-content {
     display: flex;
@@ -99,7 +95,7 @@ export default function PriceSummary({
               </Row>
             </Col>
           </Row>
-          <StyledDivider />
+          <Divider />
           <Row justify="space-between">
             <Paragraph style={{ opacity: 0.6, fontSize: 14 }}>Total:</Paragraph>
             <Col>
@@ -128,7 +124,7 @@ export default function PriceSummary({
             </ButtonFormItem>
           </Row>
         </Col>
-        <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
+        <Divider type="vertical" style={{ margin: '0 46px', height: 500 }} />
         <NFTPreviewGrid filePreviews={filePreviews} />
       </Row>
     </NavContainer>

@@ -18,7 +18,6 @@ const Header = styled(PageHeader)`
   text-align: center;
   width: 701px;
   margin-top: 102px;
-  color: #fff;
 `;
 
 const AddNFTButton = styled.button`

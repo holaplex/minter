@@ -8,7 +8,6 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import React from 'react';
 
 const StyledDivider = styled(Divider)`
-  background-color: rgba(255, 255, 255, 0.1);
   height: 500px;
   margin: 0 46px;
 `;
@@ -18,7 +17,6 @@ const Header = styled(PageHeader)`
   font-weight: 900;
   font-size: 32px;
   line-height: 43px;
-  color: #fff;
   padding-top: 10px;
   padding-left: 0;
 `;
@@ -47,6 +45,7 @@ interface Props extends Partial<StepWizardChildProps> {
   onClose: () => void;
   nftValues: NFTValue[];
   storefront?: any;
+  goToOwnedRoute?: () => void;
   dispatch: MintDispatch;
 }
 
@@ -58,6 +57,7 @@ export default function OffRampScreen({
   filePreviews,
   nftValues,
   storefront,
+  goToOwnedRoute,
 }: Props) {
   const listingUrl = storefront ? `https://${storefront.subdomain}.holaplex.com/owned` : '';
 
@@ -66,13 +66,15 @@ export default function OffRampScreen({
   const titleTxt = successfulMints
     ? `🎉 You’ve minted ${successfulMints} NFT${successfulMints > 1 ? 's' : ''}!`
     : `You've minted ${0} NFTs`;
-  const storefrontMintCopy = `${
-    successfulMints > 1 ? 'They are' : 'It is'
-  } available in your wallet. Now you can
-  list ${successfulMints > 1 ? 'them' : 'it'} on your Holaplex store.`;
 
   const noStorefrontCopy =
     'On your Holaplex store you’ll be able to list and sell your NFTs. Setting up a store only takes 5 min and is totally free!';
+
+  const storefrontMintCopy = `${
+    successfulMints > 1 ? 'They are' : 'It is'
+  } available in your wallet. Now you can
+    list ${successfulMints > 1 ? 'them' : 'it'} on your Holaplex store.`;
+
   const mintCopy = successfulMints ? (storefront ? storefrontMintCopy : noStorefrontCopy) : '';
 
   const headerCopy = storefront
@@ -84,6 +86,54 @@ export default function OffRampScreen({
           : 'No NFTs minted.'
       }`
     : 'Let’s set up your free Holaplex store';
+
+  const getNextStep = () => {
+    if (successfulMints) {
+      if (goToOwnedRoute) {
+        return (
+          <Button type="primary" onClick={goToOwnedRoute}>
+            Go to owned NFTs
+          </Button>
+        );
+      }
+      if (storefront) {
+        return (
+          <Button
+            type="primary"
+            onClick={() => (window.location.href = listingUrl)}
+            style={{ height: 'fit-content', marginTop: 38 }}
+          >
+            List on your Holaplex store
+            <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+              {storefront.subdomain}.holaplex.com
+            </Paragraph>
+          </Button>
+        );
+      } else {
+        return (
+          <Button
+            type="primary"
+            onClick={() => (window.location.href = 'https://holaplex.com/storefront/new')}
+          >
+            Create your Free Store
+          </Button>
+        );
+      }
+    }
+
+    return (
+      <Button
+        type="primary"
+        onClick={() => {
+          dispatch({ type: 'RESET_FORM', payload: [] });
+          goToStep!(1);
+        }}
+        style={{ height: 'fit-content', marginTop: 38 }}
+      >
+        Start Over
+      </Button>
+    );
+  };
 
   return (
     <NavContainer
@@ -99,7 +149,6 @@ export default function OffRampScreen({
           <>
             <Paragraph
               style={{
-                color: '#fff',
                 opacity: 0.6,
                 fontSize: 14,
                 fontWeight: 400,
@@ -108,40 +157,7 @@ export default function OffRampScreen({
               {mintCopy}
             </Paragraph>
 
-            {successfulMints ? (
-              <>
-                {storefront ? (
-                  <Button
-                    type="primary"
-                    onClick={() => (window.location.href = listingUrl)}
-                    style={{ height: 'fit-content', marginTop: 38 }}
-                  >
-                    List on your Holaplex store
-                    <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                      {storefront.subdomain}.holaplex.com
-                    </Paragraph>
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    onClick={() => (window.location.href = 'https://holaplex.com/storefront/new')}
-                  >
-                    Create your Free Store
-                  </Button>
-                )}
-              </>
-            ) : (
-              <Button
-                type="primary"
-                onClick={() => {
-                  dispatch({ type: 'RESET_FORM', payload: [] });
-                  goToStep!(1);
-                }}
-                style={{ height: 'fit-content', marginTop: 38 }}
-              >
-                Start Over
-              </Button>
-            )}
+            {getNextStep()}
           </>
         </Wrapper>
         <StyledDivider type="vertical" />

@@ -28,16 +28,12 @@ const Header = styled(PageHeader)`
   text-align: center;
   width: 701px;
   margin-top: 47px;
-  color: #fff;
 `;
 
 const { Paragraph, Title } = Typography;
 
 const StyledSummaryItem = styled.div`
   max-width: 245px;
-  .ant-typography {
-    color: #fff;
-  }
 `;
 
 const Attribute = styled(Space)`
@@ -88,7 +84,7 @@ const SummaryItem = ({
       )}
       <Paragraph
         ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
-        style={{ opacity: '60%', color: '#fff' }}
+        style={{ opacity: '60%' }}
       >
         {value.description}
       </Paragraph>

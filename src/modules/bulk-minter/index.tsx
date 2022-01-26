@@ -200,6 +200,7 @@ interface Props {
   onClose: () => void;
   connection: Connection;
   savedEndpoint?: string;
+  goToOwnedRoute?: () => void;
 }
 
 function BulkMinter({
@@ -210,6 +211,7 @@ function BulkMinter({
   wallet,
   connection,
   savedEndpoint,
+  goToOwnedRoute,
 }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
@@ -478,6 +480,7 @@ function BulkMinter({
             onClose={onClose}
             nftValues={state.nftValues}
             storefront={storefront}
+            goToOwnedRoute={goToOwnedRoute}
           />
         </StepWizard>
       </StyledLayout>

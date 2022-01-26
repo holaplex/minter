@@ -26,7 +26,6 @@ interface MintNFTResponse {
 const StyledDivider = styled(Divider)`
   margin: 0 46px;
   height: 500px;
-  background-color: rgba(255, 255, 255, 0.1);
 `;
 
 const APPROVAL_FAILED_CODE = 4001;
@@ -313,7 +312,7 @@ export default function MintInProgress({
           {showErrors && (
             <>
               <Row style={{ marginTop: 144 }}>
-                <Paragraph style={{ fontSize: 14, color: '#D24040' }}>
+                <Paragraph style={{ fontSize: 14, color: 'var(--ant-error-color)' }}>
                   {/* TODO: Show error */}
                   Mint #{index + 1} failed.
                 </Paragraph>

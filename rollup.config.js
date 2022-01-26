@@ -5,17 +5,13 @@ import json from '@rollup/plugin-json';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { terser } from 'rollup-plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import lessToJs from 'less-vars-to-js';
 import postcss from 'rollup-plugin-postcss'
 import image from 'rollup-plugin-img';
-import fs from 'fs';
 import lessTildeImporter from '@ovh-ux/rollup-plugin-less-tilde-importer';
 import path from 'path';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
-const antdLess = fs.readFileSync('./ant-theme.less', 'utf8');
 
-const antdVars = lessToJs(antdLess, {resolveVariables: true, stripPrefix: true});
 
 
 const input = 'src/index.ts';
@@ -43,7 +39,7 @@ const plugins = ({ browser }) => [
     use: {
         sass: null,
         stylus: null,
-        less: { javascriptEnabled: true, modifyVars: antdVars }
+        less: { javascriptEnabled: true }
     }, 
    extract: true
 }),
@@ -78,10 +74,6 @@ const config = ({ browser, format } = { browser: false }) => {
         const base = {
           format: 'iife',
           sourcemap: true,
-          globals: {
-            '@solana/web3.js': 'solanaWeb3',
-            '@solana/spl-token': 'splToken',
-          },
         };
         config.output = [
           {

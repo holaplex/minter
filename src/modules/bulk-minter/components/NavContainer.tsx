@@ -13,7 +13,6 @@ const Header = styled(PageHeader)`
   font-size: 24px;
   line-height: 65px;
   text-align: center;
-  color: #fff;
   padding-top: 10px;
 `;
 

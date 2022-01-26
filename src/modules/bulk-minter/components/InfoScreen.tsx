@@ -14,7 +14,6 @@ import { StyledClearButton } from './RoyaltiesCreators';
 const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
 
 const StyledDivider = styled(Divider)`
-  background-color: rgba(255, 255, 255, 0.1);
   height: 500px;
   margin: 0 46px;
 `;

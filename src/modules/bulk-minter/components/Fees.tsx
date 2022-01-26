@@ -16,7 +16,6 @@ const Grid = styled.div`
 `;
 
 const StyledDivider = styled(Divider)`
-  background-color: rgba(255, 255, 255, 0.1);
   height: 500px;
   margin: 0 46px;
 `;

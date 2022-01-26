@@ -28,7 +28,6 @@ const Header = styled(PageHeader)`
   font-size: 3rem;
   line-height: 3rem;
   text-align: center;
-  color: #fff;
   width: 100%;
 
   @media only screen and (min-width: 768px) {
@@ -37,7 +36,6 @@ const Header = styled(PageHeader)`
 `;
 
 const Copy = styled.p<{ transparent?: boolean }>`
-  color: #fff;
   font-size: 20px;
   font-style: normal;
   font-weight: 300;
@@ -79,8 +77,6 @@ export default function UploadStep({ nextStep, dispatch, onClose }: Props) {
     accept: NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
     showUploadList: false,
     style: {
-      background: 'rgba(255,255,255,0.1)',
-      border: '1px dashed rgba(255, 255, 255, 0.2)',
       boxSizing: 'border-box',
       marginTop: 50,
     },
