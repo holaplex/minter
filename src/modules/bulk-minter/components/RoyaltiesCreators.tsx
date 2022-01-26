@@ -212,7 +212,7 @@ const CreatorsRow = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <StyledCreatorsRow>
+    <StyledCreatorsRow className="minter-creators-row">
       {isHolaplex ? (
         <img height={32} width={32} src={holaplexLogo} alt="holaplex-logo" />
       ) : (
@@ -291,7 +291,7 @@ const CreatorsRow = ({
       ) : (
         <RemoveCreatorIcon onClick={() => removeCreator(creatorAddress)} />
       )}
-      {isHolaplex && (
+      {isHolaplex && isModalVisible && (
         <Modal
           width={668}
           visible={isModalVisible}
