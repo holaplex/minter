@@ -12,7 +12,7 @@ import {
   Modal,
   Button,
 } from 'antd';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import React, { useEffect, useRef, useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -322,7 +322,7 @@ const CreatorsRow = ({
             padding: '114px 67px 47px 67px',
             zIndex: 1033,
           }}
-          wrapProps={{ zIndex: 1033 }}
+          wrapProps={{ style: { zIndex: 1033 } }}
         >
           <CommunityFundInfo />
         </Modal>
@@ -536,6 +536,7 @@ export default function RoyaltiesCreators({
       goToStep={goToStep}
       onClose={onClose}
     >
+      <ToastContainer autoClose={15000} />
       <Row>
         <FormWrapper>
           <Form.Item label="Royalties">
