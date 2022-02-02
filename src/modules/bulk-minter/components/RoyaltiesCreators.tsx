@@ -688,7 +688,9 @@ export default function RoyaltiesCreators({
                   setEditionsSelection(value);
                   if (value === 'one') {
                     setMaxSupply(MAX_SUPPLY_ONE_OF_ONE);
-                  } else if (value == 'unlimited') {
+                  } else if (value === 'limited') {
+                    setMaxSupply(1);
+                  } else if (value === 'unlimited') {
                     setMaxSupply(undefined);
                   }
                 }}
