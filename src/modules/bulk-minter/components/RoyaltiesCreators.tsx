@@ -318,7 +318,6 @@ const CreatorsRow = ({
           footer={null}
           bodyStyle={{
             borderRadius: '10px',
-            background: '#262626',
             padding: '114px 67px 47px 67px',
             zIndex: 1033,
           }}

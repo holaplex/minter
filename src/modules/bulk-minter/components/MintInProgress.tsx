@@ -141,7 +141,7 @@ export default function MintInProgress({
       : { ...nftValue, mintStatus: MintStatus.SUCCESS };
     updateNFTValue(updatedValue, index);
 
-    setTransactionStep(TransactionStep.APPROVING);
+    setTransactionStep(TransactionStep.META_DATA_UPLOADING);
 
     if (isLast) {
       track('Mint Successful', {
@@ -200,7 +200,6 @@ export default function MintInProgress({
         setMintResp(mintResp);
         setTransactionStep(TransactionStep.FINALIZING);
         await connection.confirmTransaction(mintResp.txId);
-        setTransactionStep(TransactionStep.SUCCESS);
       } catch (err) {
         console.error(err);
         if (err?.code === APPROVAL_FAILED_CODE) {

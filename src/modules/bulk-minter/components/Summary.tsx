@@ -34,6 +34,10 @@ const { Paragraph, Title } = Typography;
 
 const StyledSummaryItem = styled.div`
   max-width: 245px;
+
+  img {
+    object-fit: cover;
+  }
 `;
 
 const Attribute = styled(Space)`
