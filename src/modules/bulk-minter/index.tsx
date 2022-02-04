@@ -453,9 +453,9 @@ function BulkMinter({
             pubKey={pubKey}
             connection={connection}
           />
-          {files.map((_, index) => (
+          {files.map((file, index) => (
             <MintInProgress
-              key={index}
+              key={file.name}
               files={files}
               filePreviews={filePreviews}
               wallet={wallet}

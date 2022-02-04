@@ -22,6 +22,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   justify-content: center;
   align-items: center;
   position: relative;
+  max-height: 120px;
 
   ${({ isFinished }) => isFinished && 'opacity: 0.5;'}
 

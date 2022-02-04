@@ -35,6 +35,7 @@ enum TransactionStep {
   SENDING_FAILED,
   APPROVAL_FAILED,
   META_DATA_UPLOAD_FAILED,
+  START,
   META_DATA_UPLOADING,
   APPROVING,
   SENDING,
@@ -122,7 +123,7 @@ export default function MintInProgress({
   holaSignMetadata,
   savedEndpoint,
 }: Props) {
-  const [transactionStep, setTransactionStep] = useState(TransactionStep.META_DATA_UPLOADING);
+  const [transactionStep, setTransactionStep] = useState(TransactionStep.START);
   const [mintResp, setMintResp] = useState<MintNFTResponse | null>(null);
   const solanaEndpoint = savedEndpoint || process.env.NEXT_PUBLIC_SOLANA_ENDPOINT;
 
@@ -141,8 +142,6 @@ export default function MintInProgress({
       : { ...nftValue, mintStatus: MintStatus.SUCCESS };
     updateNFTValue(updatedValue, index);
 
-    setTransactionStep(TransactionStep.META_DATA_UPLOADING);
-
     if (isLast) {
       track('Mint Successful', {
         event_category: 'Minter',
@@ -150,7 +149,7 @@ export default function MintInProgress({
       });
     }
     nextStep!();
-  }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
+  }, [nextStep, nftValue, updateNFTValue, showErrors, index]);
 
   const attemptHolaplexSign = useCallback(async () => {
     if (!mintResp) {
@@ -170,7 +169,6 @@ export default function MintInProgress({
         metaProgramId,
         onComplete: () => {
           setTransactionStep(TransactionStep.SUCCESS);
-          handleNext();
         },
         onError: (msg: string) => {
           throw new Error(msg);
@@ -180,7 +178,7 @@ export default function MintInProgress({
       console.log('signing err', err);
       setTransactionStep(TransactionStep.SIGNING_FAILED);
     }
-  }, [setTransactionStep, mintResp, handleNext]);
+  }, [setTransactionStep, mintResp, nftValue, isActive, handleNext]);
 
   const attemptMint = useCallback(
     async (metaData: UploadedFilePin) => {
@@ -225,6 +223,12 @@ export default function MintInProgress({
       return; // Don't accidentally mint
     }
 
+    if (
+      transactionStep === TransactionStep.APPROVING ||
+      transactionStep === TransactionStep.FINALIZING
+    ) {
+      return;
+    }
     let metaData: UploadedFilePin | null = null;
 
     try {
@@ -242,10 +246,13 @@ export default function MintInProgress({
     }
 
     if (isActive && nftValue) {
-      if (transactionStep === TransactionStep.META_DATA_UPLOADING) {
+      if (transactionStep === TransactionStep.START) {
+        setTransactionStep(TransactionStep.META_DATA_UPLOADING);
         attemptMetaDataUpload();
       } else if (transactionStep === TransactionStep.SIGNING) {
         attemptHolaplexSign();
+      } else if (transactionStep === TransactionStep.SUCCESS) {
+        handleNext();
       }
     }
   }, [
