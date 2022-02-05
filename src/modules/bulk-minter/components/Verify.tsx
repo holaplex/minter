@@ -27,6 +27,9 @@ const AddNFTButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   img {
     transform: rotate(45deg);
