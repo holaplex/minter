@@ -46,6 +46,7 @@ const StyledButton = styled(Button)`
 
   img {
     opacity: 0.5;
+    max-width: inherit;
   }
 `;
 
