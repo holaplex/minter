@@ -42,7 +42,7 @@ export interface UploadedFilePin extends NFTFile {
 
 export type FormValues = { [key: string]: NFTFormValue };
 
-type NFTCategory = 'image' | 'video' | 'audio' | 'vr' | 'html';
+type NFTCategory = 'image' | 'video' | 'audio' | 'vr' | 'pdf' | 'html';
 
 export interface NFTFormValue {
   name: string;
@@ -216,6 +216,9 @@ function BulkMinter({
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
 
+  const gutCheck = 12;
+  console.log('gut check', gutCheck);
+
   const { files, formValues, filePreviews } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
@@ -229,9 +232,15 @@ function BulkMinter({
         method: 'POST',
         body,
       });
+
+      if (!resp.ok) throw new Error();
+
       const json = await resp.json();
+
       if (json) {
         return json.files[0];
+      } else {
+        throw new Error('No JSON returned from cover image upload');
       }
     } catch (e) {
       console.error('Could not upload file', e);
@@ -326,16 +335,26 @@ function BulkMinter({
     const metaData = new File([JSON.stringify(nftWithHolaplexAsLastCreator)], 'metadata');
     const metaDataFileForm = new FormData();
     metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
-    const resp = await fetch(STORAGE_UPLOAD_ENDPOINT, {
-      body: metaDataFileForm,
-      method: 'POST',
-    });
 
-    const json = await resp.json(); // TODO: Type this
+    try {
+      const resp = await fetch(STORAGE_UPLOAD_ENDPOINT, {
+        body: metaDataFileForm,
+        method: 'POST',
+      });
 
-    const payload: UploadedFilePin = json.files[0];
+      if (!resp.ok) throw new Error();
 
-    return Promise.resolve(payload);
+      const json = await resp.json();
+      if (json) {
+        const payload: UploadedFilePin = json.files[0];
+        return Promise.resolve(payload);
+      } else {
+        throw new Error('Metadata JSON not available');
+      }
+    } catch (e) {
+      console.error('Could not upload metadata', e);
+      throw new Error(e);
+    }
   };
 
   const updateNFTValue = (value: NFTValue, index: number) => {

@@ -12,7 +12,7 @@ export const MAX_FILES = 10;
 export const MAX_FILE_SIZE = 100000000;
 // For reference https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
 export const NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING =
-  'image/jpeg,image/png,image/gif,video/mp4,video/mov,audio/mp3,audio/wave,audio/flac,.glb';
+  'image/jpeg,image/png,image/gif,video/mp4,video/mov,audio/mp3,audio/wave,audio/flac,.glb,.pdf';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -116,7 +116,7 @@ export default function UploadStep({ nextStep, dispatch, onClose }: Props) {
             <Space direction="vertical">
               <Copy>Drag up to 10 files here.</Copy>
               <Copy transparent style={{ fontSize: 14 }}>
-                Supported file types: jpg, png, gif, mp4, mov, mp3, wav, flac, glb
+                Supported file types: jpg, png, gif, mp4, mov, mp3, wav, flac, glb, pdf
               </Copy>
             </Space>
 

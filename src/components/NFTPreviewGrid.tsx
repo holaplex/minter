@@ -5,7 +5,7 @@ import RedXClose from '../assets/images/red-x-close.svg';
 import FeatherIcon from 'feather-icons-react';
 import { FilePreview, MintStatus, NFTValue } from '../modules/bulk-minter/index';
 import { Image as AntImage } from 'antd';
-import { is3DFile, is3DFilePreview, isAudio, isImage, isVideo } from '../utils/files';
+import { is3DFile, is3DFilePreview, isAudio, isImage, isPdf, isVideo } from '../utils/files';
 import React, { useRef, useState } from 'react';
 import { StyledModal } from './VerifyFileUpload';
 import ModelViewer from './ModelViewer';
@@ -160,7 +160,16 @@ export const NFTPreviewGrid = ({
 
   const handlePrevClick = (fp: FilePreview) => {
     setCurrentFile(fp.file);
-    showModal();
+
+    if (isPdf(fp)) {
+      const fileURL = URL.createObjectURL(fp.file);
+      const tab = window.open();
+      if (tab) {
+        tab.location.href = fileURL;
+      }
+    } else {
+      showModal();
+    }
   };
 
   const getFilePreview = (fp: FilePreview) => {
@@ -174,6 +183,10 @@ export const NFTPreviewGrid = ({
 
     if (is3DFilePreview(fp)) {
       return <Preview onClick={() => handlePrevClick(fp)} fp={fp} icon="box" />;
+    }
+
+    if (isPdf(fp)) {
+      return <Preview onClick={() => handlePrevClick(fp)} fp={fp} icon="file-text" />;
     }
 
     if (isImage(fp)) {

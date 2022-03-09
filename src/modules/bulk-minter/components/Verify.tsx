@@ -102,7 +102,6 @@ export default function Verify({
     <NavContainer previousStep={handlePrevious} goToStep={goToStep} onClose={onClose}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
-        {/* Does this need children?  Can we just put it all into one component? */}
         <VerifyFileUpload removeFile={removeFile} files={files} width={5}>
           {files.length < MAX_FILES && (
             <Upload

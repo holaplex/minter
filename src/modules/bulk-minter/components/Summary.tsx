@@ -190,7 +190,10 @@ export default function Summary({
         body,
       });
 
+      if (!resp.ok) throw new Error('Assets failed to upload');
+
       const uploadedFilePins = await resp.json();
+
       dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
       setNFTValues(uploadedFilePins.files);
       nextStep!();

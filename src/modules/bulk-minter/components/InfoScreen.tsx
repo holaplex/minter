@@ -6,7 +6,7 @@ import XCloseIcon from '../../../assets/images/x-close.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import { FilePreview, FormValues, MintDispatch, NFTAttribute, NFTFormValue } from '../index';
 import Text from 'antd/lib/typography/Text';
-import { is3DFile, isAudio, isVideo } from '../../../utils/files';
+import { is3DFile, isAudio, isPdf, isVideo } from '../../../utils/files';
 import NavContainer from './NavContainer';
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import { StyledClearButton } from './RoyaltiesCreators';
@@ -96,7 +96,8 @@ export default function InfoScreen({
   const [errorList, setErrorList] = useState<string[]>([]);
   const nftList = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
-  const showCoverUpload = isVideo(currentFile) || isAudio(currentFile) || is3DFile(currentFile);
+  const showCoverUpload =
+    isVideo(currentFile) || isAudio(currentFile) || is3DFile(currentFile) || isPdf(currentFile);
 
   const handleNext = () => {
     const fieldsToValidate = [

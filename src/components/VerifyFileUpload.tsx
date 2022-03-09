@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import RedXClose from '../assets/images/red-x-close.svg';
 import { Image as AntImage, Modal } from 'antd';
-import { is3DFile, isAudio, isImage, isVideo } from '../utils/files';
+import { is3DFile, isAudio, isImage, isPdf, isVideo } from '../utils/files';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import React, { useRef, useState } from 'react';
@@ -86,7 +86,7 @@ export const StyledModal = styled(Modal)`
   }
 `;
 
-export const VidAudPrevWrapper = styled.div`
+export const PreviewWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -129,7 +129,7 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
   const getFilePreview = (file: File) => {
     if (isAudio(file)) {
       return (
-        <VidAudPrevWrapper
+        <PreviewWrapper
           onClick={() => {
             setCurrentFile(file);
             showModal();
@@ -137,13 +137,13 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
         >
           <FeatherIcon icon="volume-2" />
           <PrevSubTitle>{file.name}</PrevSubTitle>
-        </VidAudPrevWrapper>
+        </PreviewWrapper>
       );
     }
 
     if (isVideo(file)) {
       return (
-        <VidAudPrevWrapper
+        <PreviewWrapper
           onClick={() => {
             setCurrentFile(file);
             showModal();
@@ -151,13 +151,13 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
         >
           <FeatherIcon icon="video" />
           <PrevSubTitle>{file.name}</PrevSubTitle>
-        </VidAudPrevWrapper>
+        </PreviewWrapper>
       );
     }
 
     if (is3DFile(file)) {
       return (
-        <VidAudPrevWrapper
+        <PreviewWrapper
           onClick={() => {
             setCurrentFile(file);
             showModal();
@@ -165,7 +165,24 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
         >
           <FeatherIcon icon="box" />
           <PrevSubTitle>{file.name}</PrevSubTitle>
-        </VidAudPrevWrapper>
+        </PreviewWrapper>
+      );
+    }
+    if (isPdf(file)) {
+      return (
+        <PreviewWrapper
+          onClick={() => {
+            setCurrentFile(file);
+            const fileURL = URL.createObjectURL(file);
+            const tab = window.open();
+            if (tab) {
+              tab.location.href = fileURL;
+            }
+          }}
+        >
+          <FeatherIcon icon="file-text" />
+          <PrevSubTitle>{file.name}</PrevSubTitle>
+        </PreviewWrapper>
       );
     }
 

@@ -11,6 +11,8 @@ export const is3DFilePreview = (filePreview: FilePreview) =>
 
 export const is3DFile = (file: File) => file.name.endsWith('.glb');
 
+export const isPdf = (file: File | FilePreview) => file.type.startsWith('application/pdf');
+
 export const detectCategoryByFileExt = (fileName: string) => {
   const extension = fileName.split('.').pop();
   if (extension) {
@@ -29,6 +31,8 @@ export const detectCategoryByFileExt = (fileName: string) => {
         return 'audio';
       case 'glb':
         return 'vr';
+      case 'pdf':
+        return 'pdf';
       case 'html':
         return 'html';
     }
