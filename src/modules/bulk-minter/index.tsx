@@ -216,9 +216,6 @@ function BulkMinter({
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
 
-  const gutCheck = 12;
-  console.log('gut check', gutCheck);
-
   const { files, formValues, filePreviews } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
