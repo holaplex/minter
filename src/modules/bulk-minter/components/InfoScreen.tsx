@@ -241,18 +241,11 @@ export default function InfoScreen({
             <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
           </Form.Item>
           <Form.Item
-            name={[nftNumber, 'collectionName']}
-            label="Collection Name"
-            initialValue={previousNFT ? previousNFT.collectionName : ''}
+            name={[nftNumber, 'externalUrl']}
+            label="External URL"
+            initialValue={previousNFT ? previousNFT.externalUrl : ''}
           >
-            <Input placeholder="e.g., Solflare X NFT (optional)" />
-          </Form.Item>
-          <Form.Item
-            name={[nftNumber, 'collectionFamily']}
-            label="Collection Family"
-            initialValue={previousNFT ? previousNFT.collectionFamily : ''}
-          >
-            <Input placeholder="e.g., Solflare (optional)" />
+            <Input placeholder="e.g., https://example.com" />
           </Form.Item>
           <Form.Item label="Attributes">
             <Form.List

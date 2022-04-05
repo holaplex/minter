@@ -37,6 +37,7 @@ const StyledSummaryItem = styled.div`
 
   img {
     object-fit: cover;
+    min-height: 245px;
   }
 `;
 
@@ -78,14 +79,7 @@ const SummaryItem = ({
       <Title level={4} style={{ marginBottom: 3 }}>
         {value.name}
       </Title>
-      {value.collectionName && (
-        <Paragraph style={{ marginBottom: 5, fontWeight: 'bold' }}>
-          {value.collectionName}
-        </Paragraph>
-      )}
-      {value.collectionFamily && (
-        <Paragraph style={{ marginBottom: 18 }}>{value.collectionFamily}</Paragraph>
-      )}
+
       <Paragraph
         ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
         style={{ opacity: '60%' }}
@@ -96,6 +90,12 @@ const SummaryItem = ({
         <Attribute>
           <Paragraph style={{ width: 110 }}>Royalty:</Paragraph>
           <Paragraph>{value.seller_fee_basis_points / 100}%</Paragraph>
+        </Attribute>
+      )}
+      {value.externalUrl && (
+        <Attribute>
+          <Paragraph style={{ width: 110 }}>External URL:</Paragraph>
+          <Paragraph>{value.externalUrl}</Paragraph>
         </Attribute>
       )}
       {value.attributes?.map((attribute: NFTAttribute, index: number) =>
@@ -176,7 +176,7 @@ export default function Summary({
         nrOfCreators: nft.properties.creators.length,
         royaltyPercentage: nft.seller_fee_basis_points,
         hasDescription: !!nft.description,
-        hasCollection: !!nft.collectionName,
+        hasEternalURL: !!nft.externalUrl,
       }));
       track('Mint info and royalty Completed', {
         event_category: 'Minter',

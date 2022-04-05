@@ -49,10 +49,9 @@ export interface NFTFormValue {
   imageName: string;
   coverImageFile?: File;
   description: string;
-  collectionName: string;
-  collectionFamily: string;
   attributes: Array<NFTAttribute>;
   seller_fee_basis_points: number;
+  externalUrl: string;
   properties: { creators: Array<Creator>; maxSupply?: number };
 }
 
@@ -68,11 +67,6 @@ export enum MintStatus {
   SUCCESS,
 }
 
-export interface Collection {
-  name: string;
-  family: string;
-}
-
 export interface FilePreview {
   type: string;
   coverImage: File | null;
@@ -85,11 +79,10 @@ export interface NFTValue {
   attributes?: NFTAttribute[];
   symbol: string;
   image: string;
-  collection?: Collection;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
   animation_url?: string;
-
+  external_url?: string;
   properties: {
     files: FileOrString[];
     maxSupply?: number;
@@ -280,10 +273,7 @@ function BulkMinter({
       symbol: '',
       seller_fee_basis_points: value.seller_fee_basis_points,
       image,
-      collection: {
-        name: value.collectionName,
-        family: value.collectionFamily,
-      },
+      external_url: value.externalUrl,
       attributes: value.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
         if (!isNil(a?.trait_type)) {
           result.push({ trait_type: a.trait_type, value: a.value });

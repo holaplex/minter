@@ -320,7 +320,7 @@ export default function MintInProgress({
               <Row style={{ marginTop: 144 }}>
                 <Paragraph style={{ fontSize: 14, color: 'var(--ant-error-color)' }}>
                   {/* TODO: Show error */}
-                  Mint #{index + 1} failed.
+                  Mint #{index + 1} failed
                 </Paragraph>
               </Row>
               <Row>
