@@ -12,6 +12,7 @@ import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import { StyledClearButton } from './RoyaltiesCreators';
 
 const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
+const URL_REGEX = /((?:https?\:\/\/|www\.)(?:[-a-z0-9]+\.)*[-a-z0-9]+.*)/;
 
 const StyledDivider = styled(Divider)`
   height: 500px;
@@ -242,6 +243,7 @@ export default function InfoScreen({
           </Form.Item>
           <Form.Item
             name={[nftNumber, 'externalUrl']}
+            rules={[{ pattern: URL_REGEX, message: 'Please enter a valid URL' }]}
             label="External URL"
             initialValue={previousNFT ? previousNFT.externalUrl : ''}
           >
