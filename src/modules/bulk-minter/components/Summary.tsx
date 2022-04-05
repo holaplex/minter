@@ -176,7 +176,7 @@ export default function Summary({
         nrOfCreators: nft.properties.creators.length,
         royaltyPercentage: nft.seller_fee_basis_points,
         hasDescription: !!nft.description,
-        hasEternalURL: !!nft.externalUrl,
+        hasExternalUrl: !!nft.externalUrl,
       }));
       track('Mint info and royalty Completed', {
         event_category: 'Minter',
