@@ -92,7 +92,7 @@ export default function OffRampScreen({
       if (goToOwnedRoute) {
         return (
           <Button type="primary" onClick={goToOwnedRoute}>
-            Go to owned NFTs
+            Go to created NFTs
           </Button>
         );
       }
