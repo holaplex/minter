@@ -375,10 +375,12 @@ export default function RoyaltiesCreators({
   const nftList = form.getFieldsValue(files.map((_, i) => `nft-${i}`)) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
-  const royaltyPercentageWithEnforcedRoyalties = 100 - HOLAPLEX_CREATOR_OBJECT.share; // 2% royalties for holaplex makes this 98
-  const defaultRoyaltyCreator = enforcedRoyalties
-  ? { address: userKey ?? '', share:  royaltyPercentageWithEnforcedRoyalties } 
-  : { address: userKey ?? '', share: 100 } 
+
+  let royaltyPercentageTotal = 100;
+  if (enforcedRoyalties) {
+    royaltyPercentageTotal -= HOLAPLEX_CREATOR_OBJECT.share;
+  }
+  const defaultRoyaltyCreator = { address: userKey ?? '', share:  royaltyPercentageTotal } 
    
   
 
@@ -426,7 +428,7 @@ export default function RoyaltiesCreators({
 
 
     setShowErrors(false);
-    if (total !== royaltyPercentageWithEnforcedRoyalties || creators.filter((creator) => creator.share === 0).length > 0) {
+    if (total !== royaltyPercentageTotal || creators.filter((creator) => creator.share === 0).length > 0) {
       setShowErrors(true);
     }
 
@@ -439,7 +441,7 @@ export default function RoyaltiesCreators({
 
     const zeroedRoyalties = creators.filter((creator) => creator.share === 0);
 
-    if (totalRoyaltyShares === 0 || totalRoyaltyShares > royaltyPercentageWithEnforcedRoyalties || zeroedRoyalties.length > 0) {
+    if (totalRoyaltyShares === 0 || totalRoyaltyShares > royaltyPercentageTotal || zeroedRoyalties.length > 0) {
       setShowErrors(true);
       return;
     }
@@ -510,7 +512,7 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        const newShareSplit = royaltyPercentageWithEnforcedRoyalties / (creators.length + 1);
+        const newShareSplit = royaltyPercentageTotal / (creators.length + 1);
 
         setCreators([
           ...creators.map((c) => ({ ...c, share: newShareSplit })),
@@ -526,7 +528,7 @@ export default function RoyaltiesCreators({
   };
 
   const removeCreator = (creatorAddress: string) => {
-    const newShareSplit = 98 / (creators.length - 1);
+    const newShareSplit = royaltyPercentageTotal / (creators.length - 1);
 
     setCreators([
       ...creators
@@ -589,6 +591,7 @@ export default function RoyaltiesCreators({
             </Row>
           )}
           <Row>
+            {enforcedRoyalties && 
             <CreatorsRow
               creatorAddress={HOLAPLEX_CREATOR_OBJECT.address}
               share={HOLAPLEX_CREATOR_OBJECT.share}
@@ -596,6 +599,7 @@ export default function RoyaltiesCreators({
               updateCreator={updateCreator}
               removeCreator={removeCreator}
             />
+            }
             {creators.map((creator) => (
               <CreatorsRow
                 creatorAddress={creator.address}
