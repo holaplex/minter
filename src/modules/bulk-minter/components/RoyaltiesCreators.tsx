@@ -428,7 +428,7 @@ export default function RoyaltiesCreators({
 
 
     setShowErrors(false);
-    if (total !== royaltyPercentageTotal || creators.filter((creator) => creator.share === 0).length > 0) {
+    if (total !== royaltyPercentageTotal) {
       setShowErrors(true);
     }
 
@@ -439,9 +439,8 @@ export default function RoyaltiesCreators({
   const applyToAll = () => {
     if (showErrors) return;
 
-    const zeroedRoyalties = creators.filter((creator) => creator.share === 0);
 
-    if (totalRoyaltyShares === 0 || totalRoyaltyShares > royaltyPercentageTotal || zeroedRoyalties.length > 0) {
+    if (totalRoyaltyShares > royaltyPercentageTotal) {
       setShowErrors(true);
       return;
     }
