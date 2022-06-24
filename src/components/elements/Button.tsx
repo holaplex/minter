@@ -1,9 +1,9 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { WalletDisconnectButton, WalletModalButton } from '@solana/wallet-adapter-react-ui';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { TailSpin } from 'react-loader-spinner';
 import { ButtonReset } from '../../styles/ButtonReset';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 interface ButtonProps {
   children?: any;
@@ -68,20 +68,6 @@ const Button = ({
 };
 
 export default Button;
-
-const ButtonStyles = css`
-  width: 88px;
-  height: 32px;
-  border-radius: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: #171717;
-`;
 
 export const ButtonV3 = styled.button`
   width: 88px;
