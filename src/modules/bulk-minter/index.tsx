@@ -23,8 +23,14 @@ export const MAX_CREATOR_LIMIT = 4;
 export interface Creator {
   address: string;
   share: number;
+  charityProps?: CharityProps
 }
 
+export interface CharityProps {
+  isCharity: boolean;
+  displayName: string;
+  imageUrl?: string;
+}
 const StyledLayout = styled(Layout)`
   width: 100%;
   overflow: hidden;

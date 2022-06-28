@@ -29,10 +29,13 @@ import {
   Creator,
   FormValues,
   FilePreview,
+  CharityProps,
 } from '../index';
 
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import CommunityFundInfo from '../../../components/CommunityFundInfo';
+import { changeBaseUrl, ChangeNonprofit } from 'src/utils/change';
+import { debounce } from 'src/utils/debounce';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
@@ -197,24 +200,28 @@ const CreatorsRow = ({
   isUser = false,
   updateCreator,
   removeCreator,
+  charityProps,
 }: {
   creatorAddress: string;
   share: number;
   isUser: boolean;
-  updateCreator: (address: string, share: number) => void;
+  updateCreator: (address: string, share: number, charityProps?: CharityProps) => void;
   removeCreator: (address: string) => void;
+  charityProps: CharityProps | undefined
 }) => {
   const ref = useRef(null);
   const [showPercentageInput, setShowPercentageInput] = useState(false);
   useOnClickOutside(ref, () => setShowPercentageInput(false));
   const isHolaplex = creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY;
-
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
     <StyledCreatorsRow className="minter-creators-row">
       {isHolaplex ? (
         <img height={32} width={32} src={holaplexLogo} alt="holaplex-logo" />
+      ) : 
+      (charityProps?.imageUrl) ? (
+        <img height={32} width={32} src={charityProps.imageUrl} className="rounded-full" alt={charityProps.displayName + '-logo'} />
       ) : (
         <img height={32} width={32} src={creatorStandinImg} alt="creator" />
       )}
@@ -227,9 +234,19 @@ const CreatorsRow = ({
       >
         {isHolaplex
           ? 'Hola Community Fund'
+          : charityProps?.displayName 
+          ? charityProps.displayName
           : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
       </Paragraph>
-      {!isHolaplex && (
+      {charityProps?.isCharity && (
+        <FeatherIcon
+          className="creator-row-icon"
+          icon="external-link"
+          onClick={() => {window.open(changeBaseUrl+creatorAddress, "_blank")}}
+        />
+      )}
+
+      {!isHolaplex && !charityProps?.isCharity && (
         <FeatherIcon
           className="creator-row-icon"
           icon="copy"
@@ -240,6 +257,7 @@ const CreatorsRow = ({
         />
       )}
       {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
+      {charityProps?.isCharity && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(charity)</Paragraph>}
       <span style={{ marginLeft: 'auto' }}></span>
       {isHolaplex && (
         <LightText
@@ -258,7 +276,7 @@ const CreatorsRow = ({
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
-          onChange={(value) => updateCreator(creatorAddress, value as number)}
+          onChange={(value) => updateCreator(creatorAddress, value as number, charityProps)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowPercentageInput(false);
@@ -377,6 +395,7 @@ export default function RoyaltiesCreators({
     previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
+  const [showDonationField, toggleDonationField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
     previousNFT ? previousNFT.seller_fee_basis_points : ROYALTIES_INPUT_DEFAULT
   );
@@ -386,6 +405,12 @@ export default function RoyaltiesCreators({
   const [maxSupply, setMaxSupply] = useState<number | undefined>(MAX_SUPPLY_ONE_OF_ONE);
   const royaltiesPercentage = royaltiesBasisPoints / 100;
   const royaltiesRef = useRef(royaltiesBasisPoints);
+
+  const [searchInput, setSearchInput] = useState<string>();
+  const [selectedNonprofit, setNonprofit] = useState<ChangeNonprofit>();
+  const [searchResults, setSearchResults] = useState<ChangeNonprofit[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
 
   useEffect(() => {
     track('Mint info Completed', {
@@ -483,11 +508,11 @@ export default function RoyaltiesCreators({
     });
   };
 
-  const updateCreator = (address: string, share: number) => {
+  const updateCreator = (address: string, share: number, charityProps?: CharityProps) => {
     const creatorIndex = creators.findIndex((creator) => creator.address === address);
     const creatorsAfterUpdate = [
       ...creators.slice(0, creatorIndex),
-      { address, share },
+      { address, share , charityProps},
       ...creators.slice(creatorIndex + 1),
     ];
     setCreators(creatorsAfterUpdate);
@@ -514,6 +539,30 @@ export default function RoyaltiesCreators({
       });
     setShowErrors(false);
   };
+  const addDonation = (nonProfit:ChangeNonprofit) => {
+    if (creators.length >= MAX_CREATOR_LIMIT) {
+      throw new Error('Max level of creators reached');
+    }
+    const existingCreators = creators.map((c) => c.address);
+    const indexOfDuplicate = existingCreators.findIndex((a) => nonProfit.crypto.solana_address === a);
+    if (indexOfDuplicate !== -1) {
+      throw new Error('All creator hashes must be unique');
+    }
+    const newShareSplit = 98 / (creators.length + 1);
+    setCreators([
+      ...creators.map((c) => ({ ...c, share: newShareSplit })),
+      { address: nonProfit.crypto.solana_address, 
+        share: newShareSplit,
+        charityProps: {
+          isCharity: true,
+          displayName: nonProfit.name,
+          imageUrl:nonProfit.icon_url
+        } },
+    ]);
+    setSearchResults([]);
+    toggleDonationField(false);
+    setShowErrors(false);
+  };
 
   const removeCreator = (creatorAddress: string) => {
     const newShareSplit = 98 / (creators.length - 1);
@@ -526,6 +575,56 @@ export default function RoyaltiesCreators({
     setShowErrors(false);
   };
 
+  const handleSearch = async (e:any) => {
+    
+    const debounceTimer = 300;
+    
+    setSearchInput(e.target.value);
+    if (e.target.value === '') {
+      setTimeout(() => {
+        setSearchResults([])
+        setLoading(false)
+        setIsTyping(false)
+        setNonprofit(undefined)
+        console.log(searchInput,searchResults,isTyping,selectedNonprofit, loading,)
+      }, debounceTimer)
+    } else {
+      setIsTyping(true);
+      debounce.debounceFcn(() => performSearch(e.target.value), debounceTimer)
+    }
+
+  }
+  const performSearch = (textToSearch: string) => {
+    setLoading(true)
+    const queryParams = new URLSearchParams()
+    queryParams.append('search_term', textToSearch!)
+    fetch(
+      `https://api.getchange.io/api/v1/nonprofit_basics?${queryParams.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        // Some nonprofits do not have crypto addresses; filter these out.
+        return response.nonprofits.filter(
+          (n: any) => n.crypto !== undefined
+        ) as ChangeNonprofit[]
+      })
+      .then((nonprofits) => {
+        console.log(nonprofits)
+        setSearchResults(nonprofits)
+      })
+      .catch(() => {
+        console.log('error finding nonprofits')
+      })
+      .finally(() => {
+        setIsTyping(false)
+        setLoading(false)
+      })
+  }
   if (!userKey) return null;
 
   return (
@@ -572,8 +671,14 @@ export default function RoyaltiesCreators({
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
-                onClick={() => toggleCreatorField(true)}
-              >
+                onClick={() => {toggleDonationField(true); toggleCreatorField(false); form.resetFields(['addDonation']); setSearchResults([])}}
+                >
+                Add Charity
+              </StyledClearButton>
+              <StyledClearButton
+                className="text-theme-color"
+                type="text"
+                onClick={() => {toggleCreatorField(true);  toggleDonationField(false); }}>
                 Add Creator
               </StyledClearButton>
             </Row>
@@ -585,6 +690,7 @@ export default function RoyaltiesCreators({
               isUser={false}
               updateCreator={updateCreator}
               removeCreator={removeCreator}
+              charityProps={undefined}
             />
             {creators.map((creator) => (
               <CreatorsRow
@@ -594,6 +700,7 @@ export default function RoyaltiesCreators({
                 key={creator.address}
                 updateCreator={updateCreator}
                 removeCreator={removeCreator}
+                charityProps={creator.charityProps}
               />
             ))}
           </Row>
@@ -662,6 +769,64 @@ export default function RoyaltiesCreators({
                 </Button>
                 <Button type="primary" onClick={addCreator}>
                   Add
+                </Button>
+              </Row>
+            </Row>
+          )}
+         {showDonationField && (
+            <Row>
+              <Form.Item
+                name="addDonation"
+                style={{ width: '100%' }}
+                rules={[
+                  { required: true, message: 'Please enter a value' },
+                  {
+                    message: 'You can only add 4 creators',
+                    async validator() {
+                      if (creators.length === MAX_CREATOR_LIMIT) {
+                        throw new Error();
+                      }
+                    },
+                  }
+                ]}
+              >
+                <Input
+                  id="charity-input"
+                  style={{ margin: '39px 0 13px', height: 50 }}
+                  placeholder="Search for a nonprofit by name or EIN"
+                  maxLength={44}
+                  required
+                  onChange={handleSearch}
+                />
+              </Form.Item>
+
+
+            {/* render 1st two search results */}
+            {searchResults && (
+            <Row>
+            {searchResults.map((result,i) => {
+              if (i < 2) {
+                return (
+                  <Paragraph key={i} onClick={()=>addDonation(result)}>
+                   { result.name + (' ')} (<Button>(select)</Button>) <br/>
+                   { result.description }
+                  </Paragraph>
+                )
+              }
+              else {return}
+            })}
+
+            </Row>
+            )}
+
+              <Row>
+                <Button
+                  type="primary"
+                  onClick={() => {toggleDonationField(false); setSearchResults([]);
+                }}
+                  style={{ marginRight: 13 }}
+                >
+                  Cancel
                 </Button>
               </Row>
             </Row>
