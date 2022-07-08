@@ -36,6 +36,7 @@ import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import CommunityFundInfo from '../../../components/CommunityFundInfo';
 import { changeBaseUrl, ChangeNonprofit } from 'src/utils/change';
 import { debounce } from 'src/utils/debounce';
+import Loading from './Loading';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
@@ -216,7 +217,7 @@ const CreatorsRow = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <StyledCreatorsRow className="minter-creators-row">
+    <StyledCreatorsRow className="found-charity-row">
       {isHolaplex ? (
         <img height={32} width={32} src={holaplexLogo} alt="holaplex-logo" />
       ) : 
@@ -348,6 +349,64 @@ const CreatorsRow = ({
   );
 };
 
+const CharityRow = ({
+  charity,
+  onSelect
+}: {
+  charity: ChangeNonprofit;
+  onSelect: () => void;
+}) => {
+  const {name, icon_url, crypto, description, ein} = charity;
+  const {solana_address} = crypto;
+  return (
+    <div>
+    <StyledCreatorsRow className="minter-charity-row">
+      {icon_url ? (
+        <img height={32} width={32} className="rounded-full" src={icon_url} alt={name + '-logo'} />
+      ) : (
+        <img height={32} width={32} className="rounded-full"  src={creatorStandinImg} alt="generic-logo" />
+      )}
+      <Paragraph
+        style={{
+          margin: '0 14px 0 6px',
+          maxWidth: 200,
+          fontSize: 14,
+        }}
+      >
+        {charity.name}
+
+
+      </Paragraph>
+      <FeatherIcon
+          className="creator-row-icon"
+          icon="external-link"
+          onClick={() => {window.open(changeBaseUrl + solana_address, "_blank")}}
+        />
+      <span style={{ marginLeft: 'auto' }}></span>
+      <Paragraph
+        style={{ marginRight: 5, fontSize: 14, cursor: 'pointer'  }}
+        onClick={onSelect}
+      >
+        Select
+      </Paragraph>
+
+
+      </StyledCreatorsRow>
+
+      <Paragraph
+        style={{ fontSize: 10, marginLeft:14, lineClamp: 4, textOverflow: 'ellipsis', overflow: 'hidden' }}
+      >
+        {description}
+      </Paragraph>
+      <Paragraph
+        style={{ fontSize: 10, marginLeft:14 }}
+        >
+        EIN: {ein}
+      </Paragraph>
+      </div>
+  );
+};
+
 if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
   throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
 }
@@ -409,7 +468,7 @@ export default function RoyaltiesCreators({
   const [searchInput, setSearchInput] = useState<string>();
   const [selectedNonprofit, setNonprofit] = useState<ChangeNonprofit>();
   const [searchResults, setSearchResults] = useState<ChangeNonprofit[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [charityLoading, setLoading] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
 
   useEffect(() => {
@@ -586,7 +645,7 @@ export default function RoyaltiesCreators({
         setLoading(false)
         setIsTyping(false)
         setNonprofit(undefined)
-        console.log(searchInput,searchResults,isTyping,selectedNonprofit, loading,)
+        console.log(searchInput,searchResults,isTyping,selectedNonprofit)
       }, debounceTimer)
     } else {
       setIsTyping(true);
@@ -777,7 +836,7 @@ export default function RoyaltiesCreators({
             <Row>
               <Form.Item
                 name="addDonation"
-                style={{ width: '100%' }}
+                style={{ width: '100%', marginBottom: '0px' }}
                 rules={[
                   { required: true, message: 'Please enter a value' },
                   {
@@ -792,7 +851,7 @@ export default function RoyaltiesCreators({
               >
                 <Input
                   id="charity-input"
-                  style={{ margin: '39px 0 13px', height: 50 }}
+                  style={{ margin: '39px 0 -2px', height: 50 }}
                   placeholder="Search for a nonprofit by name or EIN"
                   maxLength={44}
                   required
@@ -803,14 +862,45 @@ export default function RoyaltiesCreators({
 
             {/* render 1st two search results */}
             {searchResults && (
-            <Row>
+            <Row
+             style={{ backgroundColor: '#262626', rowGap:'10px',  position: 'relative'}}
+            >
+            {charityLoading ? (
+              <div
+                style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  alignItems: 'center',
+                  inset: 0,
+                }}
+              >
+                <Loading/>
+                {/* dummy div for spinner if no results */}
+                {(searchResults.length === 0) && <Row
+                  style={{ marginTop: '10px', backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', minHeight:'200px', margin: '10px 5px 5px 5px'}}
+                  
+                > 
+                  &nbsp;
+                  </Row>}
+              </div>
+            ) : (
+              ''
+            )}
+
             {searchResults.map((result,i) => {
               if (i < 2) {
                 return (
-                  <Paragraph key={i} onClick={()=>addDonation(result)}>
-                   { result.name + (' ')} (<Button>(select)</Button>) <br/>
-                   { result.description }
-                  </Paragraph>
+                  <Row
+                    style={{ marginTop: '10px', backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', margin: '10px 5px 5px 5px'}}
+                    key={result.name} 
+                  >
+                  <CharityRow
+                    charity={result}
+                    onSelect={()=>addDonation(result)}
+                  />
+                  </Row>
                 )
               }
               else {return}
@@ -824,7 +914,7 @@ export default function RoyaltiesCreators({
                   type="primary"
                   onClick={() => {toggleDonationField(false); setSearchResults([]);
                 }}
-                  style={{ marginRight: 13 }}
+                  style={{ marginTop: 10 }}
                 >
                   Cancel
                 </Button>
