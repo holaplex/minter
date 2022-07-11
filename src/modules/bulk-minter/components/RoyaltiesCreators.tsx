@@ -34,9 +34,8 @@ import {
 
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import CommunityFundInfo from '../../../components/CommunityFundInfo';
-import { changeBaseUrl, ChangeNonprofit } from 'src/utils/change';
-import { debounce } from 'src/utils/debounce';
-import Loading from './Loading';
+import { CHANGE_BASE_URL } from 'src/utils/change';
+import { ChangeDonationField } from './change/ChangeDonationField';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
@@ -64,7 +63,7 @@ const FormWrapper = styled.div`
   }
 `;
 
-const StyledCreatorsRow = styled.div`
+export const StyledCreatorsRow = styled.div`
   display: flex;
   align-items: center;
   border-radius: 25px;
@@ -208,7 +207,7 @@ const CreatorsRow = ({
   isUser: boolean;
   updateCreator: (address: string, share: number, charityProps?: CharityProps) => void;
   removeCreator: (address: string) => void;
-  charityProps: CharityProps | undefined
+  charityProps?: CharityProps | undefined
 }) => {
   const ref = useRef(null);
   const [showPercentageInput, setShowPercentageInput] = useState(false);
@@ -243,7 +242,7 @@ const CreatorsRow = ({
         <FeatherIcon
           className="creator-row-icon"
           icon="external-link"
-          onClick={() => {window.open(changeBaseUrl+creatorAddress, "_blank")}}
+          onClick={() => {window.open(CHANGE_BASE_URL+creatorAddress, "_blank")}}
         />
       )}
 
@@ -349,64 +348,6 @@ const CreatorsRow = ({
   );
 };
 
-const CharityRow = ({
-  charity,
-  onSelect
-}: {
-  charity: ChangeNonprofit;
-  onSelect: () => void;
-}) => {
-  const {name, icon_url, crypto, description, ein} = charity;
-  const {solana_address} = crypto;
-  return (
-    <div>
-    <StyledCreatorsRow className="minter-charity-row">
-      {icon_url ? (
-        <img height={32} width={32} className="rounded-full" src={icon_url} alt={name + '-logo'} />
-      ) : (
-        <img height={32} width={32} className="rounded-full"  src={creatorStandinImg} alt="generic-logo" />
-      )}
-      <Paragraph
-        style={{
-          margin: '0 14px 0 6px',
-          maxWidth: 200,
-          fontSize: 14,
-        }}
-      >
-        {charity.name}
-
-
-      </Paragraph>
-      <FeatherIcon
-          className="creator-row-icon"
-          icon="external-link"
-          onClick={() => {window.open(changeBaseUrl + solana_address, "_blank")}}
-        />
-      <span style={{ marginLeft: 'auto' }}></span>
-      <Paragraph
-        style={{ marginRight: 5, fontSize: 14, cursor: 'pointer'  }}
-        onClick={onSelect}
-      >
-        Select
-      </Paragraph>
-
-
-      </StyledCreatorsRow>
-
-      <Paragraph
-        style={{ fontSize: 10, marginLeft:14, lineClamp: 4, textOverflow: 'ellipsis', overflow: 'hidden' }}
-      >
-        {description}
-      </Paragraph>
-      <Paragraph
-        style={{ fontSize: 10, marginLeft:14 }}
-        >
-        EIN: {ein}
-      </Paragraph>
-      </div>
-  );
-};
-
 if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
   throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
 }
@@ -464,12 +405,6 @@ export default function RoyaltiesCreators({
   const [maxSupply, setMaxSupply] = useState<number | undefined>(MAX_SUPPLY_ONE_OF_ONE);
   const royaltiesPercentage = royaltiesBasisPoints / 100;
   const royaltiesRef = useRef(royaltiesBasisPoints);
-
-  const [searchInput, setSearchInput] = useState<string>();
-  const [selectedNonprofit, setNonprofit] = useState<ChangeNonprofit>();
-  const [searchResults, setSearchResults] = useState<ChangeNonprofit[]>([]);
-  const [charityLoading, setLoading] = useState<boolean>(false);
-  const [isTyping, setIsTyping] = useState<boolean>(false);
 
   useEffect(() => {
     track('Mint info Completed', {
@@ -598,30 +533,6 @@ export default function RoyaltiesCreators({
       });
     setShowErrors(false);
   };
-  const addDonation = (nonProfit:ChangeNonprofit) => {
-    if (creators.length >= MAX_CREATOR_LIMIT) {
-      throw new Error('Max level of creators reached');
-    }
-    const existingCreators = creators.map((c) => c.address);
-    const indexOfDuplicate = existingCreators.findIndex((a) => nonProfit.crypto.solana_address === a);
-    if (indexOfDuplicate !== -1) {
-      throw new Error('All creator hashes must be unique');
-    }
-    const newShareSplit = 98 / (creators.length + 1);
-    setCreators([
-      ...creators.map((c) => ({ ...c, share: newShareSplit })),
-      { address: nonProfit.crypto.solana_address, 
-        share: newShareSplit,
-        charityProps: {
-          isCharity: true,
-          displayName: nonProfit.name,
-          imageUrl:nonProfit.icon_url
-        } },
-    ]);
-    setSearchResults([]);
-    toggleDonationField(false);
-    setShowErrors(false);
-  };
 
   const removeCreator = (creatorAddress: string) => {
     const newShareSplit = 98 / (creators.length - 1);
@@ -634,56 +545,8 @@ export default function RoyaltiesCreators({
     setShowErrors(false);
   };
 
-  const handleSearch = async (e:any) => {
-    
-    const debounceTimer = 300;
-    
-    setSearchInput(e.target.value);
-    if (e.target.value === '') {
-      setTimeout(() => {
-        setSearchResults([])
-        setLoading(false)
-        setIsTyping(false)
-        setNonprofit(undefined)
-        console.log(searchInput,searchResults,isTyping,selectedNonprofit)
-      }, debounceTimer)
-    } else {
-      setIsTyping(true);
-      debounce.debounceFcn(() => performSearch(e.target.value), debounceTimer)
-    }
 
-  }
-  const performSearch = (textToSearch: string) => {
-    setLoading(true)
-    const queryParams = new URLSearchParams()
-    queryParams.append('search_term', textToSearch!)
-    fetch(
-      `https://api.getchange.io/api/v1/nonprofit_basics?${queryParams.toString()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((response) => {
-        // Some nonprofits do not have crypto addresses; filter these out.
-        return response.nonprofits.filter(
-          (n: any) => n.crypto !== undefined
-        ) as ChangeNonprofit[]
-      })
-      .then((nonprofits) => {
-        console.log(nonprofits)
-        setSearchResults(nonprofits)
-      })
-      .catch(() => {
-        console.log('error finding nonprofits')
-      })
-      .finally(() => {
-        setIsTyping(false)
-        setLoading(false)
-      })
-  }
+
   if (!userKey) return null;
 
   return (
@@ -730,7 +593,7 @@ export default function RoyaltiesCreators({
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
-                onClick={() => {toggleDonationField(true); toggleCreatorField(false); form.resetFields(['addDonation']); setSearchResults([])}}
+                onClick={() => {toggleDonationField(true); toggleCreatorField(false); form.resetFields(['addDonation'])}}
                 >
                 Add Charity
               </StyledClearButton>
@@ -749,7 +612,6 @@ export default function RoyaltiesCreators({
               isUser={false}
               updateCreator={updateCreator}
               removeCreator={removeCreator}
-              charityProps={undefined}
             />
             {creators.map((creator) => (
               <CreatorsRow
@@ -772,7 +634,7 @@ export default function RoyaltiesCreators({
                 rules={[
                   { required: true, message: 'Please enter a value' },
                   {
-                    message: 'You can only add 4 creators',
+                    message: `You can only add ${MAX_CREATOR_LIMIT} creators`,
                     async validator() {
                       if (creators.length === MAX_CREATOR_LIMIT) {
                         throw new Error();
@@ -832,95 +694,15 @@ export default function RoyaltiesCreators({
               </Row>
             </Row>
           )}
-         {showDonationField && (
-            <Row>
-              <Form.Item
-                name="addDonation"
-                style={{ width: '100%', marginBottom: '0px' }}
-                rules={[
-                  { required: true, message: 'Please enter a value' },
-                  {
-                    message: 'You can only add 4 creators',
-                    async validator() {
-                      if (creators.length === MAX_CREATOR_LIMIT) {
-                        throw new Error();
-                      }
-                    },
-                  }
-                ]}
-              >
-                <Input
-                  id="charity-input"
-                  style={{ margin: '39px 0 -2px', height: 50 }}
-                  placeholder="Search for a nonprofit by name or EIN"
-                  maxLength={44}
-                  required
-                  onChange={handleSearch}
-                />
-              </Form.Item>
 
+          <ChangeDonationField
+              showDonationField={showDonationField}
+              creators={creators}
+              updateDonationFieldState={toggleDonationField}
+              updateCreatorState={setCreators}
+              updateShowErrorState={setShowErrors}
+          /> 
 
-            {/* render 1st two search results */}
-            {searchResults && (
-            <Row
-             style={{ backgroundColor: '#262626', rowGap:'10px',  position: 'relative'}}
-            >
-            {charityLoading ? (
-              <div
-                style={{
-                  position: 'absolute',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  alignItems: 'center',
-                  inset: 0,
-                }}
-              >
-                <Loading/>
-                {/* dummy div for spinner if no results */}
-                {(searchResults.length === 0) && <Row
-                  style={{ marginTop: '10px', backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', minHeight:'200px', margin: '10px 5px 5px 5px'}}
-                  
-                > 
-                  &nbsp;
-                  </Row>}
-              </div>
-            ) : (
-              ''
-            )}
-
-            {searchResults.map((result,i) => {
-              if (i < 2) {
-                return (
-                  <Row
-                    style={{ marginTop: '10px', backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', margin: '10px 5px 5px 5px'}}
-                    key={result.name} 
-                  >
-                  <CharityRow
-                    charity={result}
-                    onSelect={()=>addDonation(result)}
-                  />
-                  </Row>
-                )
-              }
-              else {return}
-            })}
-
-            </Row>
-            )}
-
-              <Row>
-                <Button
-                  type="primary"
-                  onClick={() => {toggleDonationField(false); setSearchResults([]);
-                }}
-                  style={{ marginTop: 10 }}
-                >
-                  Cancel
-                </Button>
-              </Row>
-            </Row>
-          )}
           {showErrors && (
             <Row style={{ marginTop: 7 }}>
               <Paragraph style={{ color: 'red', fontSize: 14 }}>
