@@ -194,6 +194,7 @@ interface Props {
   connection: Connection;
   savedEndpoint?: string;
   goToOwnedRoute?: () => void;
+  enforcedRoyalties?: boolean;
 }
 
 function BulkMinter({
@@ -205,6 +206,7 @@ function BulkMinter({
   connection,
   savedEndpoint,
   goToOwnedRoute,
+  enforcedRoyalties = true,
 }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
@@ -309,17 +311,19 @@ function BulkMinter({
 
   const uploadMetaData = async (nftValue: NFTValue) => {
     const creators = nftValue.properties.creators as Creator[];
-    const creatorArrayWithHolaplexLast = [...creators, HOLAPLEX_CREATOR_OBJECT];
+    if (enforcedRoyalties) {
+      creators.push(HOLAPLEX_CREATOR_OBJECT)
+    }
 
-    const nftWithHolaplexAsLastCreator: NFTValue = {
+    const nftsWithCreators: NFTValue = {
       ...nftValue,
       properties: {
         ...nftValue.properties,
-        creators: creatorArrayWithHolaplexLast,
+        creators,
       },
     };
 
-    const metaData = new File([JSON.stringify(nftWithHolaplexAsLastCreator)], 'metadata');
+    const metaData = new File([JSON.stringify(nftsWithCreators)], 'metadata');
     const metaDataFileForm = new FormData();
     metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
 
@@ -418,6 +422,7 @@ function BulkMinter({
             index={0}
             onClose={onClose}
             track={track}
+            enforcedRoyalties={enforcedRoyalties}
           />
           {doEachRoyaltyInd &&
             files
@@ -436,6 +441,7 @@ function BulkMinter({
                   doEachRoyaltyInd={doEachRoyaltyInd}
                   onClose={onClose}
                   track={track}
+                  enforcedRoyalties={enforcedRoyalties}
                 />
               ))}
           <Summary

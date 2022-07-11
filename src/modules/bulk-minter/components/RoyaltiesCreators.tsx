@@ -331,7 +331,7 @@ const CreatorsRow = ({
 };
 
 if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
-  throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
+  console.log('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
 }
 
 export const HOLAPLEX_CREATOR_OBJECT = Object.freeze({
@@ -352,6 +352,7 @@ interface Props extends Partial<StepWizardChildProps> {
   onClose: () => void;
   doEachRoyaltyInd?: boolean;
   track: any; // type this
+  enforcedRoyalties: boolean;
 }
 
 export default function RoyaltiesCreators({
@@ -369,12 +370,22 @@ export default function RoyaltiesCreators({
   index,
   isFirst = false,
   track,
+  enforcedRoyalties = true,
 }: Props) {
   const nftList = form.getFieldsValue(files.map((_, i) => `nft-${i}`)) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
+
+  let royaltyPercentageTotal = 100;
+  if (enforcedRoyalties) {
+    royaltyPercentageTotal -= HOLAPLEX_CREATOR_OBJECT.share;
+  }
+  const defaultRoyaltyCreator = { address: userKey ?? '', share:  royaltyPercentageTotal } 
+   
+  
+
   const [creators, setCreators] = useState<Array<Creator>>(
-    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }]
+    previousNFT ? previousNFT.properties.creators : [defaultRoyaltyCreator]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
@@ -415,8 +426,9 @@ export default function RoyaltiesCreators({
       return totalShares + creator.share;
     }, 0);
 
+
     setShowErrors(false);
-    if (total !== 98 || creators.filter((creator) => creator.share === 0).length > 0) {
+    if (total !== royaltyPercentageTotal) {
       setShowErrors(true);
     }
 
@@ -427,9 +439,8 @@ export default function RoyaltiesCreators({
   const applyToAll = () => {
     if (showErrors) return;
 
-    const zeroedRoyalties = creators.filter((creator) => creator.share === 0);
 
-    if (totalRoyaltyShares === 0 || totalRoyaltyShares > 98 || zeroedRoyalties.length > 0) {
+    if (totalRoyaltyShares > royaltyPercentageTotal) {
       setShowErrors(true);
       return;
     }
@@ -500,7 +511,7 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        const newShareSplit = 98 / (creators.length + 1);
+        const newShareSplit = royaltyPercentageTotal / (creators.length + 1);
 
         setCreators([
           ...creators.map((c) => ({ ...c, share: newShareSplit })),
@@ -516,7 +527,7 @@ export default function RoyaltiesCreators({
   };
 
   const removeCreator = (creatorAddress: string) => {
-    const newShareSplit = 98 / (creators.length - 1);
+    const newShareSplit = royaltyPercentageTotal / (creators.length - 1);
 
     setCreators([
       ...creators
@@ -579,6 +590,7 @@ export default function RoyaltiesCreators({
             </Row>
           )}
           <Row>
+            {enforcedRoyalties && 
             <CreatorsRow
               creatorAddress={HOLAPLEX_CREATOR_OBJECT.address}
               share={HOLAPLEX_CREATOR_OBJECT.share}
@@ -586,6 +598,7 @@ export default function RoyaltiesCreators({
               updateCreator={updateCreator}
               removeCreator={removeCreator}
             />
+            }
             {creators.map((creator) => (
               <CreatorsRow
                 creatorAddress={creator.address}
