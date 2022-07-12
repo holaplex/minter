@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useMemo } from "react";
 import {
   Input,
   Form,
@@ -17,7 +17,8 @@ import { StyledCreatorsRow } from "../RoyaltiesCreators";
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import creatorStandinImg from '../../../../assets/images/creator-standin.png';
-import { debounce } from "src/utils/debounce";
+import { Debounce } from "src/utils/debounce";
+import styled from 'styled-components';
 
 const DEBOUNCE_INTERVAL_MS = 300;
 
@@ -29,6 +30,15 @@ interface Props {
     updateShowErrorState: (value: React.SetStateAction<boolean>)=>void;
 }
 
+const StyledSelectButton = styled(Paragraph)`
+  margin-right: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 const CharityRow = ({
     charity,
     onSelect
@@ -39,7 +49,7 @@ const CharityRow = ({
     const {name, icon_url, crypto, description, ein} = charity;
     const {solana_address} = crypto;
     return (
-      <div>
+      <div style={{ width: '100%' }}>
       <StyledCreatorsRow className="minter-charity-row">
         {icon_url ? (
           <img height={32} width={32} className="rounded-full" src={icon_url} alt={name + '-logo'} />
@@ -51,6 +61,7 @@ const CharityRow = ({
             margin: '0 14px 0 6px',
             maxWidth: 200,
             fontSize: 14,
+            lineHeight: 1.2,
           }}
         >
           {charity.name}
@@ -63,12 +74,11 @@ const CharityRow = ({
             onClick={() => {window.open(CHANGE_BASE_URL + solana_address, "_blank")}}
           />
         <span style={{ marginLeft: 'auto' }}></span>
-        <Paragraph
-          style={{ marginRight: 5, fontSize: 14, cursor: 'pointer'  }}
+        <StyledSelectButton
           onClick={onSelect}
         >
           Select
-        </Paragraph>
+        </StyledSelectButton>
   
   
         </StyledCreatorsRow>
@@ -98,6 +108,7 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
     const [searchResults, setSearchResults] = useState<ChangeNonprofit[]>([]);
     const [charityLoading, setLoading] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);
+    const debounce = useMemo(() => new Debounce(), []);
   
     const addDonation = (nonProfit: ChangeNonprofit) => {
         if (creators.length >= MAX_CREATOR_LIMIT) {
@@ -199,9 +210,9 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
     
     
             {/* render 1st two search results */}
-            {searchResults && (
+            {(searchResults && searchResults.length > 0 || charityLoading || isTyping) && (
             <Row
-             style={{ backgroundColor: '#262626', rowGap:'10px',  position: 'relative'}}
+             style={{ backgroundColor: '#262626', rowGap:'8px', position: 'relative', padding: '8px', width: '100%', maxHeight: '320px', overflowY: 'scroll' }}
             >
             {charityLoading || isTyping ? (
               <div
@@ -215,22 +226,22 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
                 }}
               >
                 <Loading/>
-                {/* dummy div for spinner if no results */}
-                {(searchResults.length === 0) && <Row
-                  style={{ marginTop: '10px', backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', minHeight:'200px', margin: '10px 5px 5px 5px'}}
-                  
-                > 
-                  &nbsp;
-                  </Row>}
               </div>
             ) : (
               ''
             )}
+
+            {/* dummy div for spinner if no results */}
+            {((charityLoading || isTyping) && searchResults.length === 0) && <Row
+              style={{ backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', minHeight:'200px', margin: '10px 5px 5px 5px'}}
+            >
+              &nbsp;
+            </Row>}
     
-            {searchResults.slice(0,2).map((result) => {
+            {searchResults.map((result) => {
               return (
                 <Row
-                  style={{ marginTop: '10px', backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%', margin: '10px 5px 5px 5px'}}
+                  style={{ backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%' }}
                   key={result.name} 
                 >
                 <CharityRow

@@ -588,8 +588,8 @@ export default function RoyaltiesCreators({
           </Form.Item>
           {/* Display creators */}
           {creators.length < MAX_CREATOR_LIMIT && (
-            <Row justify="space-between" align="middle">
-              <Paragraph style={{ fontWeight: 900 }}>Creators split</Paragraph>
+            <Row align="middle">
+              <Paragraph style={{ fontWeight: 900, flex: 1 }}>Creators split</Paragraph>
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
@@ -600,7 +600,8 @@ export default function RoyaltiesCreators({
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
-                onClick={() => {toggleCreatorField(true);  toggleDonationField(false); }}>
+                onClick={() => {toggleCreatorField(true);  toggleDonationField(false); }}
+                style={{ paddingRight: 0 }}>
                 Add Creator
               </StyledClearButton>
             </Row>
