@@ -137,7 +137,7 @@ export function ChangeDonationField(props: Props): JSX.Element {
     setSearchResults([]);
     props.updateDonationFieldState(false);
     props.updateShowErrorState(false);
-  }, [setSearchResults]);
+  }, [setSearchResults, props]);
 
   const performSearch: (textToSearch: string) => void = useCallback(textToSearch => {
     setLoading(true);
