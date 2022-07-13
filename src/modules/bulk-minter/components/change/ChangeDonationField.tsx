@@ -39,12 +39,21 @@ const StyledSelectButton = styled(Paragraph)`
   }
 `;
 
+const AlreadyAddedNotice = styled(Paragraph)`
+  margin-right: 5px;
+  font-size: 14px;
+`;
+
 const CharityRow = ({
     charity,
-    onSelect
+    onSelect,
+    enableSelectButton,
+    selectButtonText
   }: {
     charity: ChangeNonprofit;
     onSelect: () => void;
+    enableSelectButton: boolean;
+    selectButtonText: 'Select' | 'Already Added ✅';
   }) => {
     const {name, icon_url, crypto, description, ein} = charity;
     const {solana_address} = crypto;
@@ -65,8 +74,6 @@ const CharityRow = ({
           }}
         >
           {charity.name}
-  
-  
         </Paragraph>
         <FeatherIcon
             className="creator-row-icon"
@@ -74,15 +81,16 @@ const CharityRow = ({
             onClick={() => {window.open(CHANGE_BASE_URL + solana_address, "_blank")}}
           />
         <span style={{ marginLeft: 'auto' }}></span>
-        <StyledSelectButton
+        { enableSelectButton && <StyledSelectButton
           onClick={onSelect}
         >
-          Select
-        </StyledSelectButton>
-  
-  
-        </StyledCreatorsRow>
-  
+          {selectButtonText}
+        </StyledSelectButton> }
+        { !enableSelectButton && <AlreadyAddedNotice
+        >
+          {selectButtonText}
+        </AlreadyAddedNotice> }
+      </StyledCreatorsRow>  
         <Paragraph
           style={{ fontSize: 10, marginLeft:14, lineClamp: 4, textOverflow: 'ellipsis', overflow: 'hidden' }}
         >
@@ -144,8 +152,6 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
                 }
                 else {performSearch(e.target.value)}
               }, DEBOUNCE_INTERVAL_MS)
-            
-        
           }
           const performSearch = (textToSearch: string) => {
             setLoading(true)
@@ -176,11 +182,8 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
                 setIsTyping(false)
                 setLoading(false)
               })
-          }
-  
-    return (
-        
-        <>
+          }  
+    return (<>
         {showDonationField && (
             <Row>
               <Form.Item
@@ -206,10 +209,7 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
                   required
                   onChange={handleSearch}
                 />
-              </Form.Item>
-    
-    
-            {/* render 1st two search results */}
+              </Form.Item>    
             {(searchResults && searchResults.length > 0 || charityLoading || isTyping) && (
             <Row
              style={{ backgroundColor: '#262626', rowGap:'8px', position: 'relative', padding: '8px', width: '100%', maxHeight: '320px', overflowY: 'scroll' }}
@@ -239,15 +239,23 @@ export const ChangeDonationField: FunctionComponent<Props> = ({
             </Row>}
     
             {searchResults.map((result) => {
+              const { solana_address } = result.crypto;
+              const existingCreators = creators.map((c) => c.address);
+              const indexOfDuplicate = existingCreators.findIndex((a) => solana_address === a);
+              const enableSelectButton = indexOfDuplicate === -1;
+              const selectButtonText = enableSelectButton ? 'Select' : 'Already Added ✅';
+
               return (
                 <Row
                   style={{ backgroundColor: '#D9D9D91A', borderRadius: '3px', width: '100%' }}
                   key={result.name} 
                 >
-                <CharityRow
-                  charity={result}
-                  onSelect={()=>addDonation(result)}
-                />
+                  <CharityRow
+                    charity={result}
+                    onSelect={()=>addDonation(result)}
+                    enableSelectButton={enableSelectButton}
+                    selectButtonText={selectButtonText}
+                  />
                 </Row>
               )
             })}

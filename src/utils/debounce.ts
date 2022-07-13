@@ -11,4 +11,3 @@ export class Debounce {
     this.typingTimeout = setTimeout(callback, timeoutDuration)
   }
 }
-  // source: https://github.com/solana-labs/governance-ui/blob/060b2c311f8c35e3e3f87feed00cfc6d4f22a924/utils/debounce.tsx
