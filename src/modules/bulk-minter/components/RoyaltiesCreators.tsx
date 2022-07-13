@@ -194,34 +194,34 @@ const RemoveCreatorIcon = (props: { onClick: () => void }) => (
   </StyledCloseIcon>
 );
 
-const CreatorsRow = ({
-  creatorAddress,
-  share,
-  isUser = false,
-  updateCreator,
-  removeCreator,
-  charityProps,
-}: {
+interface CreatorRowProps {
   creatorAddress: string;
   share: number;
   isUser: boolean;
   updateCreator: (address: string, share: number, charityProps?: CharityProps) => void;
   removeCreator: (address: string) => void;
-  charityProps?: CharityProps | undefined
-}) => {
+  charityProps?: CharityProps | undefined;
+}
+
+function CreatorsRow(props: CreatorRowProps): JSX.Element {
   const ref = useRef(null);
   const [showPercentageInput, setShowPercentageInput] = useState(false);
   useOnClickOutside(ref, () => setShowPercentageInput(false));
-  const isHolaplex = creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY;
+  const isHolaplex = props.creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY;
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <StyledCreatorsRow className="found-charity-row">
+    <StyledCreatorsRow>
       {isHolaplex ? (
         <img height={32} width={32} src={holaplexLogo} alt="holaplex-logo" />
-      ) : 
-      (charityProps?.imageUrl) ? (
-        <img height={32} width={32} src={charityProps.imageUrl} className="rounded-full" alt={charityProps.displayName + '-logo'} />
+      ) : props.charityProps?.imageUrl ? (
+        <img
+          height={32}
+          width={32}
+          src={props.charityProps.imageUrl}
+          className="rounded-full"
+          alt={props.charityProps.displayName + '-logo'}
+        />
       ) : (
         <img height={32} width={32} src={creatorStandinImg} alt="creator" />
       )}
@@ -234,30 +234,34 @@ const CreatorsRow = ({
       >
         {isHolaplex
           ? 'Hola Community Fund'
-          : charityProps?.displayName 
-          ? charityProps.displayName
-          : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
+          : props.charityProps?.displayName
+          ? props.charityProps.displayName
+          : props.creatorAddress.slice(0, 4) +
+            '...' +
+            props.creatorAddress.slice(props.creatorAddress.length - 4)}
       </Paragraph>
-      {charityProps?.isCharity && (
-        <FeatherIcon
-          className="creator-row-icon"
-          icon="external-link"
-          onClick={() => {window.open(CHANGE_BASE_URL+creatorAddress, "_blank")}}
-        />
+      {props.charityProps?.isCharity && (
+        <a href={CHANGE_BASE_URL + props.creatorAddress} target="_blank">
+          <FeatherIcon className="creator-row-icon" icon="external-link" />
+        </a>
       )}
 
-      {!isHolaplex && !charityProps?.isCharity && (
-        <FeatherIcon
-          className="creator-row-icon"
-          icon="copy"
+      {!isHolaplex && !props.charityProps?.isCharity && (
+        <button
           onClick={() => {
-            navigator.clipboard.writeText(creatorAddress);
+            navigator.clipboard.writeText(props.creatorAddress);
             toast('Address copied to clipboard!');
           }}
-        />
+        >
+          <FeatherIcon className="creator-row-icon" icon="copy" />
+        </button>
       )}
-      {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
-      {charityProps?.isCharity && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(charity)</Paragraph>}
+      {props.isUser && (
+        <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>
+      )}
+      {props.charityProps?.isCharity && (
+        <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(charity)</Paragraph>
+      )}
       <span style={{ marginLeft: 'auto' }}></span>
       {isHolaplex && (
         <LightText
@@ -270,13 +274,15 @@ const CreatorsRow = ({
       )}
       {showPercentageInput ? (
         <StyledPercentageInput
-          defaultValue={share}
+          defaultValue={props.share}
           min={0}
           max={100}
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
-          onChange={(value) => updateCreator(creatorAddress, value as number, charityProps)}
+          onChange={(value) =>
+            props.updateCreator(props.creatorAddress, value as number, props.charityProps)
+          }
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowPercentageInput(false);
@@ -288,7 +294,7 @@ const CreatorsRow = ({
           onClick={() => !isHolaplex && setShowPercentageInput(true)}
           style={{ marginRight: 5, fontSize: 14, cursor: isHolaplex ? '' : 'pointer' }}
         >
-          {share.toFixed(2).replace(/[.,]00$/, '')}%
+          {props.share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
       {isHolaplex ? (
@@ -307,7 +313,7 @@ const CreatorsRow = ({
           </g>
         </svg>
       ) : (
-        <RemoveCreatorIcon onClick={() => removeCreator(creatorAddress)} />
+        <RemoveCreatorIcon onClick={() => props.removeCreator(props.creatorAddress)} />
       )}
       {isHolaplex && isModalVisible && (
         <Modal
@@ -346,7 +352,7 @@ const CreatorsRow = ({
       )}
     </StyledCreatorsRow>
   );
-};
+}
 
 if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
   throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
@@ -506,7 +512,7 @@ export default function RoyaltiesCreators({
     const creatorIndex = creators.findIndex((creator) => creator.address === address);
     const creatorsAfterUpdate = [
       ...creators.slice(0, creatorIndex),
-      { address, share , charityProps},
+      { address, share, charityProps },
       ...creators.slice(creatorIndex + 1),
     ];
     setCreators(creatorsAfterUpdate);
@@ -544,8 +550,6 @@ export default function RoyaltiesCreators({
     ]);
     setShowErrors(false);
   };
-
-
 
   if (!userKey) return null;
 
@@ -593,15 +597,23 @@ export default function RoyaltiesCreators({
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
-                onClick={() => {toggleDonationField(true); toggleCreatorField(false); form.resetFields(['addDonation'])}}
-                >
+                onClick={() => {
+                  toggleDonationField(true);
+                  toggleCreatorField(false);
+                  form.resetFields(['addDonation']);
+                }}
+              >
                 Add Charity
               </StyledClearButton>
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
-                onClick={() => {toggleCreatorField(true);  toggleDonationField(false); }}
-                style={{ paddingRight: 0 }}>
+                onClick={() => {
+                  toggleCreatorField(true);
+                  toggleDonationField(false);
+                }}
+                style={{ paddingRight: 0 }}
+              >
                 Add Creator
               </StyledClearButton>
             </Row>
@@ -697,12 +709,12 @@ export default function RoyaltiesCreators({
           )}
 
           <ChangeDonationField
-              showDonationField={showDonationField}
-              creators={creators}
-              updateDonationFieldState={toggleDonationField}
-              updateCreatorState={setCreators}
-              updateShowErrorState={setShowErrors}
-          /> 
+            showDonationField={showDonationField}
+            creators={creators}
+            updateDonationFieldState={toggleDonationField}
+            updateCreatorState={setCreators}
+            updateShowErrorState={setShowErrors}
+          />
 
           {showErrors && (
             <Row style={{ marginTop: 7 }}>
