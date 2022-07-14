@@ -441,7 +441,7 @@ export default function RoyaltiesCreators({
     }, 0);
 
     setShowErrors(false);
-    if (total !== 98 || creators.filter((creator) => creator.share === 0).length > 0) {
+    if (total !== (100-HOLAPLEX_CREATOR_OBJECT.share) || creators.filter((creator) => creator.share === 0).length > 0) {
       setShowErrors(true);
     }
 
@@ -525,7 +525,7 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        const newShareSplit = 98 / (creators.length + 1);
+        const newShareSplit = (100-HOLAPLEX_CREATOR_OBJECT.share) / (creators.length + 1);
 
         setCreators([
           ...creators.map((c) => ({ ...c, share: newShareSplit })),
@@ -541,7 +541,7 @@ export default function RoyaltiesCreators({
   };
 
   const removeCreator = (creatorAddress: string) => {
-    const newShareSplit = 98 / (creators.length - 1);
+    const newShareSplit = (100-HOLAPLEX_CREATOR_OBJECT.share) / (creators.length - 1);
 
     setCreators([
       ...creators

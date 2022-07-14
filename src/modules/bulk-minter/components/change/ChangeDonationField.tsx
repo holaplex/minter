@@ -5,7 +5,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import { MAX_CREATOR_LIMIT, Creator } from '../../index';
 import { ChangeNonprofit, CHANGE_BASE_URL } from 'src/utils/change';
 import Loading from '../Loading';
-import { StyledCreatorsRow } from '../RoyaltiesCreators';
+import { HOLAPLEX_CREATOR_OBJECT, StyledCreatorsRow } from '../RoyaltiesCreators';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import creatorStandinImg from '../../../../assets/images/creator-standin.png';
@@ -121,7 +121,7 @@ export function ChangeDonationField(props: Props): JSX.Element {
     if (indexOfDuplicate !== -1) {
       throw new Error('All creator hashes must be unique');
     }
-    const newShareSplit = 98 / (props.creators.length + 1);
+    const newShareSplit = (100-HOLAPLEX_CREATOR_OBJECT.share) / (props.creators.length + 1);
     props.updateCreatorState([
       ...props.creators.map((c) => ({ ...c, share: newShareSplit })),
       {
