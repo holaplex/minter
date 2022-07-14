@@ -12,3 +12,5 @@ declare module '*.png' {
   const content: any;
   export default content;
 }
+
+declare module '@google/model-viewer/dist/model-viewer';
