@@ -666,7 +666,7 @@ export default function RoyaltiesCreators({
                   {
                     message: `You can only add ${MAX_CREATOR_LIMIT} creators`,
                     async validator() {
-                      if (creators.length === MAX_CREATOR_LIMIT) {
+                      if (creators.length >= MAX_CREATOR_LIMIT) {
                         throw new Error();
                       }
                     },

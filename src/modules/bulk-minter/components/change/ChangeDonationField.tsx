@@ -98,9 +98,9 @@ function CharityRow(props: CharityRowProps): JSX.Element {
 interface Props {
   showDonationField: boolean;
   creators: Creator[];
-  updateDonationFieldState: (show: React.SetStateAction<boolean>) => void;
-  updateCreatorState: (value: React.SetStateAction<Creator[]>) => void;
-  updateShowErrorState: (value: React.SetStateAction<boolean>) => void;
+  updateDonationFieldState: (show: boolean) => void;
+  updateCreatorState: (value: Creator[]) => void;
+  updateShowErrorState: (value: boolean) => void;
 }
 
 
@@ -192,7 +192,7 @@ export function ChangeDonationField(props: Props): JSX.Element {
               {
                 message: `You can only add ${MAX_CREATOR_LIMIT} creators`,
                 async validator() {
-                  if (props.creators.length === MAX_CREATOR_LIMIT) {
+                  if (props.creators.length >= MAX_CREATOR_LIMIT) {
                     throw new Error();
                   }
                 },
