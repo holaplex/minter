@@ -1,6 +1,6 @@
 {
   "name": "@holaplex/ui",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "description": "Holaplex UI",
   "main": "lib/index.cjs.js",
   "types": "lib/index.d.ts",
@@ -17,7 +17,7 @@
     "build": "rimraf lib && rollup -c",
     "dev": "rollup -c --watch",
     "dev-watch": "tsc-watch --onSuccess \"yalc push\"",
-    "publish": "npm publish --access=public",
+    "publish-npm": "npm publish --access=public",
     "publish-bump": "npm version patch --force && npm publish --access=public",
     "deploy": "yarn build && npm version patch --force && git push"
   },

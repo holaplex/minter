@@ -29,10 +29,13 @@ import {
   Creator,
   FormValues,
   FilePreview,
+  CharityProps,
 } from '../index';
 
 import { NFTPreviewGrid } from '../../../components/NFTPreviewGrid';
 import CommunityFundInfo from '../../../components/CommunityFundInfo';
+import { CHANGE_BASE_URL } from 'src/utils/change';
+import { ChangeDonationField } from './change/ChangeDonationField';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
@@ -60,7 +63,7 @@ const FormWrapper = styled.div`
   }
 `;
 
-const StyledCreatorsRow = styled.div`
+export const StyledCreatorsRow = styled.div`
   display: flex;
   align-items: center;
   border-radius: 25px;
@@ -191,30 +194,34 @@ const RemoveCreatorIcon = (props: { onClick: () => void }) => (
   </StyledCloseIcon>
 );
 
-const CreatorsRow = ({
-  creatorAddress,
-  share,
-  isUser = false,
-  updateCreator,
-  removeCreator,
-}: {
+interface CreatorRowProps {
   creatorAddress: string;
   share: number;
   isUser: boolean;
-  updateCreator: (address: string, share: number) => void;
+  updateCreator: (address: string, share: number, charityProps?: CharityProps) => void;
   removeCreator: (address: string) => void;
-}) => {
+  charityProps?: CharityProps | undefined;
+}
+
+function CreatorsRow(props: CreatorRowProps): JSX.Element {
   const ref = useRef(null);
   const [showPercentageInput, setShowPercentageInput] = useState(false);
   useOnClickOutside(ref, () => setShowPercentageInput(false));
-  const isHolaplex = creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY;
-
+  const isHolaplex = props.creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY;
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <StyledCreatorsRow className="minter-creators-row">
+    <StyledCreatorsRow>
       {isHolaplex ? (
         <img height={32} width={32} src={holaplexLogo} alt="holaplex-logo" />
+      ) : props.charityProps?.imageUrl ? (
+        <img
+          height={32}
+          width={32}
+          src={props.charityProps.imageUrl}
+          className="rounded-full"
+          alt={props.charityProps.displayName + '-logo'}
+        />
       ) : (
         <img height={32} width={32} src={creatorStandinImg} alt="creator" />
       )}
@@ -227,19 +234,34 @@ const CreatorsRow = ({
       >
         {isHolaplex
           ? 'Hola Community Fund'
-          : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
+          : props.charityProps?.displayName
+          ? props.charityProps.displayName
+          : props.creatorAddress.slice(0, 4) +
+            '...' +
+            props.creatorAddress.slice(props.creatorAddress.length - 4)}
       </Paragraph>
-      {!isHolaplex && (
-        <FeatherIcon
-          className="creator-row-icon"
-          icon="copy"
+      {props.charityProps?.isCharity && (
+        <a href={CHANGE_BASE_URL + props.creatorAddress} target="_blank">
+          <FeatherIcon className="creator-row-icon" icon="external-link" />
+        </a>
+      )}
+
+      {!isHolaplex && !props.charityProps?.isCharity && (
+        <button
           onClick={() => {
-            navigator.clipboard.writeText(creatorAddress);
+            navigator.clipboard.writeText(props.creatorAddress);
             toast('Address copied to clipboard!');
           }}
-        />
+        >
+          <FeatherIcon className="creator-row-icon" icon="copy" />
+        </button>
       )}
-      {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
+      {props.isUser && (
+        <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>
+      )}
+      {props.charityProps?.isCharity && (
+        <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(charity)</Paragraph>
+      )}
       <span style={{ marginLeft: 'auto' }}></span>
       {isHolaplex && (
         <LightText
@@ -252,13 +274,15 @@ const CreatorsRow = ({
       )}
       {showPercentageInput ? (
         <StyledPercentageInput
-          defaultValue={share}
+          defaultValue={props.share}
           min={0}
           max={100}
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
-          onChange={(value) => updateCreator(creatorAddress, value as number)}
+          onChange={(value) =>
+            props.updateCreator(props.creatorAddress, value as number, props.charityProps)
+          }
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowPercentageInput(false);
@@ -270,7 +294,7 @@ const CreatorsRow = ({
           onClick={() => !isHolaplex && setShowPercentageInput(true)}
           style={{ marginRight: 5, fontSize: 14, cursor: isHolaplex ? '' : 'pointer' }}
         >
-          {share.toFixed(2).replace(/[.,]00$/, '')}%
+          {props.share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
       {isHolaplex ? (
@@ -289,7 +313,7 @@ const CreatorsRow = ({
           </g>
         </svg>
       ) : (
-        <RemoveCreatorIcon onClick={() => removeCreator(creatorAddress)} />
+        <RemoveCreatorIcon onClick={() => props.removeCreator(props.creatorAddress)} />
       )}
       {isHolaplex && isModalVisible && (
         <Modal
@@ -328,7 +352,7 @@ const CreatorsRow = ({
       )}
     </StyledCreatorsRow>
   );
-};
+}
 
 if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
   console.log('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
@@ -388,6 +412,7 @@ export default function RoyaltiesCreators({
     previousNFT ? previousNFT.properties.creators : [defaultRoyaltyCreator]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
+  const [showDonationField, toggleDonationField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
     previousNFT ? previousNFT.seller_fee_basis_points : ROYALTIES_INPUT_DEFAULT
   );
@@ -428,7 +453,9 @@ export default function RoyaltiesCreators({
 
 
     setShowErrors(false);
+
     if (total !== royaltyPercentageTotal) {
+
       setShowErrors(true);
     }
 
@@ -494,11 +521,11 @@ export default function RoyaltiesCreators({
     });
   };
 
-  const updateCreator = (address: string, share: number) => {
+  const updateCreator = (address: string, share: number, charityProps?: CharityProps) => {
     const creatorIndex = creators.findIndex((creator) => creator.address === address);
     const creatorsAfterUpdate = [
       ...creators.slice(0, creatorIndex),
-      { address, share },
+      { address, share, charityProps },
       ...creators.slice(creatorIndex + 1),
     ];
     setCreators(creatorsAfterUpdate);
@@ -511,6 +538,7 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
+
         const newShareSplit = royaltyPercentageTotal / (creators.length + 1);
 
         setCreators([
@@ -527,6 +555,7 @@ export default function RoyaltiesCreators({
   };
 
   const removeCreator = (creatorAddress: string) => {
+
     const newShareSplit = royaltyPercentageTotal / (creators.length - 1);
 
     setCreators([
@@ -578,12 +607,27 @@ export default function RoyaltiesCreators({
           </Form.Item>
           {/* Display creators */}
           {creators.length < MAX_CREATOR_LIMIT && (
-            <Row justify="space-between" align="middle">
-              <Paragraph style={{ fontWeight: 900 }}>Creators split</Paragraph>
+            <Row align="middle">
+              <Paragraph style={{ fontWeight: 900, flex: 1 }}>Creators split</Paragraph>
               <StyledClearButton
                 className="text-theme-color"
                 type="text"
-                onClick={() => toggleCreatorField(true)}
+                onClick={() => {
+                  toggleDonationField(true);
+                  toggleCreatorField(false);
+                  form.resetFields(['addDonation']);
+                }}
+              >
+                Add Charity
+              </StyledClearButton>
+              <StyledClearButton
+                className="text-theme-color"
+                type="text"
+                onClick={() => {
+                  toggleCreatorField(true);
+                  toggleDonationField(false);
+                }}
+                style={{ paddingRight: 0 }}
               >
                 Add Creator
               </StyledClearButton>
@@ -607,6 +651,7 @@ export default function RoyaltiesCreators({
                 key={creator.address}
                 updateCreator={updateCreator}
                 removeCreator={removeCreator}
+                charityProps={creator.charityProps}
               />
             ))}
           </Row>
@@ -619,9 +664,9 @@ export default function RoyaltiesCreators({
                 rules={[
                   { required: true, message: 'Please enter a value' },
                   {
-                    message: 'You can only add 4 creators',
+                    message: `You can only add ${MAX_CREATOR_LIMIT} creators`,
                     async validator() {
-                      if (creators.length === MAX_CREATOR_LIMIT) {
+                      if (creators.length >= MAX_CREATOR_LIMIT) {
                         throw new Error();
                       }
                     },
@@ -679,6 +724,15 @@ export default function RoyaltiesCreators({
               </Row>
             </Row>
           )}
+
+          <ChangeDonationField
+            showDonationField={showDonationField}
+            creators={creators}
+            updateDonationFieldState={toggleDonationField}
+            updateCreatorState={setCreators}
+            updateShowErrorState={setShowErrors}
+          />
+
           {showErrors && (
             <Row style={{ marginTop: 7 }}>
               <Paragraph style={{ color: 'red', fontSize: 14 }}>
